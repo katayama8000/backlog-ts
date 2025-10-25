@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "exports": "./src/mod.ts",
   "tasks": {
-    "test": "deno test --allow-net --allow-env tests/client_test.ts tests/params_test.ts tests/request_test.ts tests/space_test.ts",
+    "test": "deno test --allow-net --allow-env tests/client_test.ts tests/params_test.ts tests/request_test.ts tests/space_test.ts tests/issue_test.ts",
     "test:all": "deno test --allow-net --allow-env --allow-read",
     "test:integration": "deno test --allow-net --allow-env --allow-read tests/integration_test.ts",
     "test:watch": "deno test --allow-net --allow-env --allow-read --watch",

@@ -104,3 +104,167 @@ export interface FileData {
   url: string;
   fileName?: string;
 }
+
+/**
+ * Issue type entity
+ */
+export interface IssueType {
+  id: number;
+  projectId: number;
+  name: string;
+  color: string;
+  displayOrder: number;
+  templateSummary?: string;
+  templateDescription?: string;
+}
+
+/**
+ * Priority entity
+ */
+export interface Priority {
+  id: number;
+  name: string;
+}
+
+/**
+ * Resolution entity
+ */
+export interface Resolution {
+  id: number;
+  name: string;
+}
+
+/**
+ * Project status entity
+ */
+export interface Status {
+  id: number;
+  projectId: number;
+  name: string;
+  color: string;
+  displayOrder: number;
+}
+
+/**
+ * Category entity
+ */
+export interface Category {
+  id: number;
+  name: string;
+  displayOrder: number;
+}
+
+/**
+ * Version entity
+ */
+export interface Version {
+  id: number;
+  projectId: number;
+  name: string;
+  description: string;
+  startDate: string | null;
+  releaseDueDate: string | null;
+  archived: boolean;
+  displayOrder: number;
+}
+
+/**
+ * Custom field entity
+ */
+export interface CustomField {
+  id: number;
+  typeId: number;
+  name: string;
+  description: string;
+  required: boolean;
+  applicableIssueTypes?: number[];
+  allowAddItem?: boolean;
+  items?: CustomFieldItem[];
+  value?: unknown;
+}
+
+/**
+ * Custom field item entity
+ */
+export interface CustomFieldItem {
+  id: number;
+  name: string;
+  displayOrder: number;
+}
+
+/**
+ * File info entity
+ */
+export interface FileInfo {
+  id: number;
+  name: string;
+  size: number;
+}
+
+/**
+ * Issue file info entity
+ */
+export interface IssueFileInfo extends FileInfo {
+  createdUser: User;
+  created: string;
+}
+
+/**
+ * Shared file entity
+ */
+export interface SharedFile {
+  id: number;
+  type: string;
+  dir: string;
+  name: string;
+  size: number;
+  createdUser: User;
+  created: string;
+  updatedUser: User;
+  updated: string;
+}
+
+/**
+ * Star entity
+ */
+export interface Star {
+  id: number;
+  comment: string | null;
+  url: string;
+  title: string;
+  presenter: User;
+  created: string;
+}
+
+/**
+ * Issue entity
+ */
+export interface Issue {
+  id: number;
+  projectId: number;
+  issueKey: string;
+  keyId: number;
+  issueType: IssueType;
+  summary: string;
+  description: string;
+  resolution?: Resolution;
+  priority: Priority;
+  status: Status;
+  assignee?: User;
+  category: Category[];
+  versions: Version[];
+  milestone: Version[];
+  startDate?: string;
+  dueDate?: string;
+  estimatedHours?: number;
+  actualHours?: number;
+  parentIssueId?: number;
+  createdUser: User;
+  created: string;
+  updatedUser: User;
+  updated: string;
+  customFields: CustomField[];
+  attachments: IssueFileInfo[];
+  sharedFiles: SharedFile[];
+  stars: Star[];
+}
