@@ -1,27 +1,7 @@
 import { assertEquals, assertExists } from "@std/assert";
 import { createClient } from "../src/mod.ts";
 import type { Issue, PostIssueParams } from "../src/mod.ts";
-
-function createMockServer(
-  handler: (req: Request) => Response | Promise<Response>,
-) {
-  const ac = new AbortController();
-  const server = Deno.serve(
-    {
-      port: 0,
-      signal: ac.signal,
-      onListen: () => {},
-    },
-    handler,
-  );
-
-  return {
-    get host() {
-      return `localhost:${(server.addr as Deno.NetAddr).port}`;
-    },
-    close: () => ac.abort(),
-  };
-}
+import { createMockServer } from "./test_utils.ts";
 
 Deno.test("postIssue - success", async () => {
   const mockIssue: Issue = {

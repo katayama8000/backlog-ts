@@ -1,27 +1,7 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { download, request } from "../src/request.ts";
 import type { BacklogConfig } from "../src/config.ts";
-
-function createMockServer(
-  handler: (req: Request) => Response | Promise<Response>,
-) {
-  const ac = new AbortController();
-  const server = Deno.serve(
-    {
-      port: 0,
-      signal: ac.signal,
-      onListen: () => {},
-    },
-    handler,
-  );
-
-  return {
-    get host() {
-      return `localhost:${(server.addr as Deno.NetAddr).port}`;
-    },
-    close: () => ac.abort(),
-  };
-}
+import { createMockServer } from "./test_utils.ts";
 
 Deno.test("request - GET with query parameters", async () => {
   const server = createMockServer((req) => {

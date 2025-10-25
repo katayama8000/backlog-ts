@@ -2,30 +2,7 @@ import { assertEquals, assertRejects } from "@std/assert";
 import { createClient } from "../src/mod.ts";
 import type { Activity, Space, SpaceNotification } from "../src/entities.ts";
 import { ActivityType } from "../src/types.ts";
-
-/**
- * Mock server helper for testing
- */
-function createMockServer(
-  handler: (req: Request) => Response | Promise<Response>,
-) {
-  const ac = new AbortController();
-  const server = Deno.serve(
-    {
-      port: 0,
-      signal: ac.signal,
-      onListen: () => {},
-    },
-    handler,
-  );
-
-  return {
-    get host() {
-      return `localhost:${(server.addr as Deno.NetAddr).port}`;
-    },
-    close: () => ac.abort(),
-  };
-}
+import { createMockServer } from "./test_utils.ts";
 
 Deno.test("getSpace - success", async () => {
   const mockSpace: Space = {
