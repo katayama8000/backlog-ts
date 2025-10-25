@@ -18,7 +18,7 @@ A Backlog API client for Deno
 ## Installation
 
 ```typescript
-import { createClient } from 'jsr:@backlog/backlog-ts';
+import { createClient } from "jsr:@backlog/backlog-ts";
 ```
 
 ## Usage
@@ -26,11 +26,11 @@ import { createClient } from 'jsr:@backlog/backlog-ts';
 ### API Key Authentication
 
 ```typescript
-import { createClient } from './src/mod.ts';
+import { createClient } from "./src/mod.ts";
 
 const client = createClient({
-  host: 'your-space.backlog.com',
-  apiKey: 'your-api-key',
+  host: "your-space.backlog.com",
+  apiKey: "your-api-key",
 });
 
 // Get space information
@@ -40,7 +40,7 @@ console.log(space);
 // Get recent activities
 const activities = await client.getSpaceActivities({
   count: 20,
-  order: 'desc',
+  order: "desc",
 });
 console.log(activities);
 ```
@@ -48,11 +48,11 @@ console.log(activities);
 ### OAuth2 Authentication
 
 ```typescript
-import { createClient } from './src/mod.ts';
+import { createClient } from "./src/mod.ts";
 
 const client = createClient({
-  host: 'your-space.backlog.com',
-  accessToken: 'your-oauth2-access-token',
+  host: "your-space.backlog.com",
+  accessToken: "your-oauth2-access-token",
 });
 
 const space = await client.getSpace();
