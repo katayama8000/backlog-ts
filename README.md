@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/katayama8000/backlog-ts/workflows/CI/badge.svg)](https://github.com/katayama8000/backlog-ts/actions)
 [![codecov](https://codecov.io/gh/katayama8000/backlog-ts/branch/main/graph/badge.svg)](https://codecov.io/gh/katayama8000/backlog-ts)
-[![JSR](https://jsr.io/badges/@backlog/backlog-ts)](https://jsr.io/@katayama8000/backlog-ts)
+[![JSR](https://jsr.io/badges/@katayama8000/backlog-ts)](https://jsr.io/@katayama8000/backlog-ts)
 
 A Backlog API client for Deno
 
@@ -11,14 +11,14 @@ A Backlog API client for Deno
 - 🦕 Built for Deno runtime
 - 📦 Zero external dependencies (uses Deno standard library only)
 - 🔒 Fully type-safe API client
-- � Function-based design (no classes)
+- ⚡ Function-based design (no classes)
 - 🔑 Supports API Key and OAuth2 authentication
 - ✅ Comprehensive test coverage with mock servers
 
 ## Installation
 
 ```typescript
-import { createClient } from 'jsr:@backlog/backlog-ts';
+import { createClient } from 'jsr:@katayama8000/backlog-ts';
 ```
 
 ## Usage
@@ -133,34 +133,13 @@ deno task lint
 deno task check
 ```
 
-## Project Structure
-
-```
-backlog-ts/
-├── deno.json           # Deno configuration
-├── src/
-│   ├── mod.ts         # Main entry point
-│   ├── config.ts      # Configuration types
-│   ├── types.ts       # Common types
-│   ├── params.ts      # API parameter types
-│   ├── entities.ts    # API response entity types
-│   ├── request.ts     # HTTP request handler
-│   └── space.ts       # Space API implementations
-└── tests/
-    ├── client_test.ts      # Client creation tests
-    ├── params_test.ts      # Parameter structure tests
-    ├── request_test.ts     # HTTP request tests (mocked)
-    ├── space_test.ts       # Space API tests (mocked)
-    └── integration_test.ts # Real API integration tests
-```
-
 ## Contributing
 
 Please read [DEVELOPMENT.md](./DEVELOPMENT.md) for details on our coding standards and development workflow.
 
 ## Publishing to JSR
 
-This package is published to [JSR (JavaScript Registry)](https://jsr.io/@backlog/backlog-ts).
+This package is published to [JSR (JavaScript Registry)](https://jsr.io/@katayama8000/backlog-ts).
 
 ### Manual Publishing
 

@@ -55,6 +55,13 @@ backlog-ts/
 - ✅ `getSpaceNotification` - Get space notification
 - ✅ `putSpaceNotification` - Update space notification
 
+### Issue APIs
+
+- ✅ `postIssue` - Create a new issue
+- ✅ `getIssue` - Get issue by ID or key
+- ✅ `getIssues` - Get issue list with filters
+- ✅ `getIssueCount` - Get issue count with filters
+
 ### Authentication
 
 - ✅ API Key authentication
@@ -219,7 +226,7 @@ Following the project's coding standards defined in `.github/copilot-instruction
  * @see https://developer.nulab.com/docs/backlog/api/2/get-space/
  */
 export async function getSpace(config: BacklogConfig): Promise<Space> {
-  return await request<Space>(config, "space");
+  return await request<Space>(config, 'space');
 }
 ```
 
@@ -228,12 +235,12 @@ export async function getSpace(config: BacklogConfig): Promise<Space> {
 ### Next Steps
 
 1. Implement Project APIs
-2. Implement Issue APIs
+2. ✅ Implement Issue APIs
 3. Implement Wiki APIs
 4. Implement User APIs
 5. Implement Git/SVN repository APIs
 6. ✅ Set up GitHub Actions CI/CD
-7. Publish to JSR (JavaScript Registry)
+7. ✅ Publish to JSR (JavaScript Registry)
 
 ### Future Enhancements
 
@@ -272,7 +279,7 @@ Runs on pushes to main/master branch:
 Runs on version tags (e.g., `v1.0.0`):
 
 - Runs tests
-- Publishes to JSR (JavaScript Registry)
+- Publishes to JSR (JavaScript Registry) as @katayama8000/backlog-ts
 
 ### Setting Up Secrets
 
