@@ -1,7 +1,8 @@
 {
-  "name": "@backlog/backlog-ts",
-  "version": "0.1.0",
+  "name": "@katayama8000/backlog-ts",
+  "version": "0.1.1",
   "exports": "./src/mod.ts",
+  "license": "MIT",
   "publish": {
     "include": [
       "src/",
