@@ -89,7 +89,7 @@ jobs:
           deno-version: 2.x
 
       - name: Generate coverage
-        run: deno test --allow-net --coverage=coverage tests/client_test.ts tests/params_test.ts tests/request_test.ts tests/space_test.ts
+        run: deno test --allow-net --coverage=coverage tests/ --ignore=tests/integration_test.ts
 
       - name: Generate coverage report
         run: deno coverage coverage --lcov --output=coverage.lcov

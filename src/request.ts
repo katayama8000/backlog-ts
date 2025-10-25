@@ -26,7 +26,7 @@ function buildQueryString(params: Record<string, unknown>): string {
 /**
  * Build request URL
  */
-function buildUrl(
+export function buildUrl(
   config: BacklogConfig,
   path: string,
   params?: Record<string, unknown>,

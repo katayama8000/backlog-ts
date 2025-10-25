@@ -1,7 +1,7 @@
 import type { BacklogConfig } from "./config.ts";
 import type { Activity, FileData, Space, SpaceNotification } from "./entities.ts";
 import type { GetActivitiesParams, PutSpaceNotificationParams } from "./params.ts";
-import { download, request } from "./request.ts";
+import { buildUrl, download, request } from "./request.ts";
 
 /**
  * Get space information
@@ -28,10 +28,10 @@ export async function getSpaceActivities(
  */
 export async function getSpaceIcon(config: BacklogConfig): Promise<FileData> {
   const result = await download(config, "space/image");
-  const protocol = config.host.startsWith("localhost:") ? "http" : "https";
+  const url = buildUrl(config, "space/image").split("?")[0]; // Remove query params from URL
   return {
     body: result.body,
-    url: `${protocol}://${config.host}/api/v2/space/image`,
+    url,
     fileName: result.fileName,
   };
 }
