@@ -18,7 +18,7 @@ A Backlog API client for Deno
 ## Installation
 
 ```typescript
-import { createClient } from "jsr:@backlog/backlog-ts";
+import { createClient } from 'jsr:@backlog/backlog-ts';
 ```
 
 ## Usage
@@ -26,11 +26,11 @@ import { createClient } from "jsr:@backlog/backlog-ts";
 ### API Key Authentication
 
 ```typescript
-import { createClient } from "./src/mod.ts";
+import { createClient } from './src/mod.ts';
 
 const client = createClient({
-  host: "your-space.backlog.com",
-  apiKey: "your-api-key",
+  host: 'your-space.backlog.com',
+  apiKey: 'your-api-key',
 });
 
 // Get space information
@@ -40,7 +40,7 @@ console.log(space);
 // Get recent activities
 const activities = await client.getSpaceActivities({
   count: 20,
-  order: "desc",
+  order: 'desc',
 });
 console.log(activities);
 ```
@@ -48,11 +48,11 @@ console.log(activities);
 ### OAuth2 Authentication
 
 ```typescript
-import { createClient } from "./src/mod.ts";
+import { createClient } from './src/mod.ts';
 
 const client = createClient({
-  host: "your-space.backlog.com",
-  accessToken: "your-oauth2-access-token",
+  host: 'your-space.backlog.com',
+  accessToken: 'your-oauth2-access-token',
 });
 
 const space = await client.getSpace();
@@ -157,6 +157,41 @@ backlog-ts/
 ## Contributing
 
 Please read [DEVELOPMENT.md](./DEVELOPMENT.md) for details on our coding standards and development workflow.
+
+## Publishing to JSR
+
+This package is published to [JSR (JavaScript Registry)](https://jsr.io/@backlog/backlog-ts).
+
+### Manual Publishing
+
+```bash
+# Make sure all tests pass
+deno task test
+
+# Dry run to check what will be published
+deno publish --dry-run
+
+# Publish to JSR
+deno publish
+```
+
+### Automatic Publishing via GitHub Actions
+
+When you push a version tag, the package is automatically published to JSR:
+
+```bash
+# Create and push a tag
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The GitHub Actions workflow will automatically:
+
+1. Run linter
+2. Run formatter check
+3. Run type check
+4. Run all tests
+5. Publish to JSR
 
 ## License
 
