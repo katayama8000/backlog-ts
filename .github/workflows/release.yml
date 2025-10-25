@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - "v*.*.*"
+      - 'v*.*.*'
 
 jobs:
   publish:
@@ -15,15 +15,24 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
           deno-version: 2.x
 
+      - name: Run linter
+        run: deno task lint
+
+      - name: Run formatter check
+        run: deno fmt --check
+
+      - name: Run type check
+        run: deno task check
+
       - name: Run tests
         run: deno task test
 
       - name: Publish to JSR
-        run: deno publish --allow-dirty
+        run: deno publish
