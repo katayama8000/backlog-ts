@@ -1,7 +1,7 @@
-import type { BacklogConfig } from './config.ts';
-import type { Project } from './entities.ts';
-import type { GetProjectsParams } from './params.ts';
-import { request } from './request.ts';
+import type { BacklogConfig } from "./config.ts";
+import type { Project } from "./entities.ts";
+import type { GetProjectsParams } from "./params.ts";
+import { request } from "./request.ts";
 
 /**
  * Get project list
@@ -9,9 +9,9 @@ import { request } from './request.ts';
  */
 export async function getProjects(
   config: BacklogConfig,
-  params?: GetProjectsParams
+  params?: GetProjectsParams,
 ): Promise<Project[]> {
-  return await request<Project[]>(config, 'projects', { params });
+  return await request<Project[]>(config, "projects", { params });
 }
 
 /**
@@ -20,7 +20,7 @@ export async function getProjects(
  */
 export async function getProject(
   config: BacklogConfig,
-  projectIdOrKey: string | number
+  projectIdOrKey: string | number,
 ): Promise<Project> {
   return await request<Project>(config, `projects/${projectIdOrKey}`);
 }

@@ -1,14 +1,14 @@
-import { assertEquals, assertExists } from '@std/assert';
-import { createClient } from '../src/mod.ts';
-import type { Project } from '../src/mod.ts';
-import { createMockServer } from './test_utils.ts';
+import { assertEquals, assertExists } from "@std/assert";
+import { createClient } from "../src/mod.ts";
+import type { Project } from "../src/mod.ts";
+import { createMockServer } from "./test_utils.ts";
 
-Deno.test('getProjects - success', async () => {
+Deno.test("getProjects - success", async () => {
   const mockProjects: Project[] = [
     {
       id: 1,
-      projectKey: 'TEST',
-      name: 'Test Project',
+      projectKey: "TEST",
+      name: "Test Project",
       chartEnabled: false,
       useResolvedForChart: false,
       subtaskingEnabled: false,
@@ -19,15 +19,15 @@ Deno.test('getProjects - success', async () => {
       useSubversion: false,
       useGit: true,
       useOriginalImageSizeAtWiki: false,
-      textFormattingRule: 'markdown',
+      textFormattingRule: "markdown",
       archived: false,
       displayOrder: 0,
       useDevAttributes: false,
     },
     {
       id: 2,
-      projectKey: 'DEMO',
-      name: 'Demo Project',
+      projectKey: "DEMO",
+      name: "Demo Project",
       chartEnabled: true,
       useResolvedForChart: true,
       subtaskingEnabled: true,
@@ -38,7 +38,7 @@ Deno.test('getProjects - success', async () => {
       useSubversion: false,
       useGit: true,
       useOriginalImageSizeAtWiki: false,
-      textFormattingRule: 'backlog',
+      textFormattingRule: "backlog",
       archived: false,
       displayOrder: 1,
       useDevAttributes: true,
@@ -47,47 +47,47 @@ Deno.test('getProjects - success', async () => {
 
   const server = createMockServer((req) => {
     const url = new URL(req.url);
-    assertEquals(url.pathname, '/api/v2/projects');
-    assertEquals(req.method, 'GET');
+    assertEquals(url.pathname, "/api/v2/projects");
+    assertEquals(req.method, "GET");
 
     return new Response(JSON.stringify(mockProjects), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   });
 
   try {
     const client = createClient({
       host: server.host,
-      apiKey: 'test-key',
+      apiKey: "test-key",
     });
 
     const projects = await client.getProjects();
 
     assertEquals(projects.length, 2);
-    assertEquals(projects[0].projectKey, 'TEST');
-    assertEquals(projects[1].projectKey, 'DEMO');
+    assertEquals(projects[0].projectKey, "TEST");
+    assertEquals(projects[1].projectKey, "DEMO");
   } finally {
     server.close();
   }
 });
 
-Deno.test('getProjects - with archived filter', async () => {
+Deno.test("getProjects - with archived filter", async () => {
   const server = createMockServer((req) => {
     const url = new URL(req.url);
-    assertEquals(url.pathname, '/api/v2/projects');
-    assertEquals(url.searchParams.get('archived'), 'true');
+    assertEquals(url.pathname, "/api/v2/projects");
+    assertEquals(url.searchParams.get("archived"), "true");
 
     return new Response(JSON.stringify([]), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   });
 
   try {
     const client = createClient({
       host: server.host,
-      apiKey: 'test-key',
+      apiKey: "test-key",
     });
 
     const projects = await client.getProjects({ archived: true });
@@ -99,21 +99,21 @@ Deno.test('getProjects - with archived filter', async () => {
   }
 });
 
-Deno.test('getProjects - with all flag', async () => {
+Deno.test("getProjects - with all flag", async () => {
   const server = createMockServer((req) => {
     const url = new URL(req.url);
-    assertEquals(url.searchParams.get('all'), 'true');
+    assertEquals(url.searchParams.get("all"), "true");
 
     return new Response(JSON.stringify([]), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   });
 
   try {
     const client = createClient({
       host: server.host,
-      apiKey: 'test-key',
+      apiKey: "test-key",
     });
 
     await client.getProjects({ all: true });
@@ -122,11 +122,11 @@ Deno.test('getProjects - with all flag', async () => {
   }
 });
 
-Deno.test('getProject - by ID', async () => {
+Deno.test("getProject - by ID", async () => {
   const mockProject: Project = {
     id: 1,
-    projectKey: 'TEST',
-    name: 'Test Project',
+    projectKey: "TEST",
+    name: "Test Project",
     chartEnabled: false,
     useResolvedForChart: false,
     subtaskingEnabled: false,
@@ -137,7 +137,7 @@ Deno.test('getProject - by ID', async () => {
     useSubversion: false,
     useGit: true,
     useOriginalImageSizeAtWiki: false,
-    textFormattingRule: 'markdown',
+    textFormattingRule: "markdown",
     archived: false,
     displayOrder: 0,
     useDevAttributes: false,
@@ -145,36 +145,36 @@ Deno.test('getProject - by ID', async () => {
 
   const server = createMockServer((req) => {
     const url = new URL(req.url);
-    assertEquals(url.pathname, '/api/v2/projects/1');
-    assertEquals(req.method, 'GET');
+    assertEquals(url.pathname, "/api/v2/projects/1");
+    assertEquals(req.method, "GET");
 
     return new Response(JSON.stringify(mockProject), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   });
 
   try {
     const client = createClient({
       host: server.host,
-      apiKey: 'test-key',
+      apiKey: "test-key",
     });
 
     const project = await client.getProject(1);
 
     assertEquals(project.id, 1);
-    assertEquals(project.projectKey, 'TEST');
-    assertEquals(project.name, 'Test Project');
+    assertEquals(project.projectKey, "TEST");
+    assertEquals(project.name, "Test Project");
   } finally {
     server.close();
   }
 });
 
-Deno.test('getProject - by key', async () => {
+Deno.test("getProject - by key", async () => {
   const mockProject: Project = {
     id: 1,
-    projectKey: 'TEST',
-    name: 'Test Project',
+    projectKey: "TEST",
+    name: "Test Project",
     chartEnabled: false,
     useResolvedForChart: false,
     subtaskingEnabled: false,
@@ -185,7 +185,7 @@ Deno.test('getProject - by key', async () => {
     useSubversion: false,
     useGit: true,
     useOriginalImageSizeAtWiki: false,
-    textFormattingRule: 'markdown',
+    textFormattingRule: "markdown",
     archived: false,
     displayOrder: 0,
     useDevAttributes: false,
@@ -193,26 +193,26 @@ Deno.test('getProject - by key', async () => {
 
   const server = createMockServer((req) => {
     const url = new URL(req.url);
-    assertEquals(url.pathname, '/api/v2/projects/TEST');
-    assertEquals(req.method, 'GET');
+    assertEquals(url.pathname, "/api/v2/projects/TEST");
+    assertEquals(req.method, "GET");
 
     return new Response(JSON.stringify(mockProject), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   });
 
   try {
     const client = createClient({
       host: server.host,
-      apiKey: 'test-key',
+      apiKey: "test-key",
     });
 
-    const project = await client.getProject('TEST');
+    const project = await client.getProject("TEST");
 
     assertEquals(project.id, 1);
-    assertEquals(project.projectKey, 'TEST');
-    assertEquals(project.name, 'Test Project');
+    assertEquals(project.projectKey, "TEST");
+    assertEquals(project.name, "Test Project");
   } finally {
     server.close();
   }

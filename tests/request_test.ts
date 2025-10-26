@@ -335,32 +335,35 @@ Deno.test("request - error with non-JSON response", async () => {
   }
 });
 
-Deno.test("request - error without message falls back to Unknown error", async () => {
-  const server = createMockServer(() => {
-    return new Response(
-      JSON.stringify({}), // Empty error object
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-  });
+Deno.test(
+  "request - error without message falls back to Unknown error",
+  async () => {
+    const server = createMockServer(() => {
+      return new Response(
+        JSON.stringify({}), // Empty error object
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    });
 
-  try {
-    const config: BacklogConfig = {
-      host: server.host,
-      apiKey: "test-key",
-    };
+    try {
+      const config: BacklogConfig = {
+        host: server.host,
+        apiKey: "test-key",
+      };
 
-    await assertRejects(
-      async () => await request(config, "test"),
-      Error,
-      "Unknown error",
-    );
-  } finally {
-    server.close();
-  }
-});
+      await assertRejects(
+        async () => await request(config, "test"),
+        Error,
+        "Unknown error",
+      );
+    } finally {
+      server.close();
+    }
+  },
+);
 
 Deno.test({
   name: "request - timeout with error response",
@@ -369,13 +372,10 @@ Deno.test({
   async fn() {
     const server = createMockServer(async () => {
       await new Promise((resolve) => setTimeout(resolve, 50));
-      return new Response(
-        JSON.stringify({ message: "Error" }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        },
-      );
+      return new Response(JSON.stringify({ message: "Error" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
     });
 
     try {
@@ -400,13 +400,10 @@ Deno.test({
   async fn() {
     const server = createMockServer(async () => {
       await new Promise((resolve) => setTimeout(resolve, 50));
-      return new Response(
-        JSON.stringify({ success: true }),
-        {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        },
-      );
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     });
 
     try {
