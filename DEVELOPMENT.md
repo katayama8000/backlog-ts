@@ -62,6 +62,11 @@ backlog-ts/
 - ✅ `getIssues` - Get issue list with filters
 - ✅ `getIssueCount` - Get issue count with filters
 
+### Project APIs
+
+- ✅ `getProjects` - Get project list
+- ✅ `getProject` - Get project by ID or key
+
 ### Authentication
 
 - ✅ API Key authentication
@@ -226,7 +231,7 @@ Following the project's coding standards defined in `.github/copilot-instruction
  * @see https://developer.nulab.com/docs/backlog/api/2/get-space/
  */
 export async function getSpace(config: BacklogConfig): Promise<Space> {
-  return await request<Space>(config, "space");
+  return await request<Space>(config, 'space');
 }
 ```
 
@@ -234,7 +239,7 @@ export async function getSpace(config: BacklogConfig): Promise<Space> {
 
 ### Next Steps
 
-1. Implement Project APIs
+1. ✅ Implement Project APIs
 2. ✅ Implement Issue APIs
 3. Implement Wiki APIs
 4. Implement User APIs

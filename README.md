@@ -18,7 +18,7 @@ A Backlog API client for Deno
 ## Installation
 
 ```typescript
-import { createClient } from "jsr:@katayama8000/backlog-ts";
+import { createClient } from 'jsr:@katayama8000/backlog-ts';
 ```
 
 ## Usage
@@ -26,11 +26,11 @@ import { createClient } from "jsr:@katayama8000/backlog-ts";
 ### API Key Authentication
 
 ```typescript
-import { createClient } from "./src/mod.ts";
+import { createClient } from './src/mod.ts';
 
 const client = createClient({
-  host: "your-space.backlog.com",
-  apiKey: "your-api-key",
+  host: 'your-space.backlog.com',
+  apiKey: 'your-api-key',
 });
 
 // Get space information
@@ -40,7 +40,7 @@ console.log(space);
 // Get recent activities
 const activities = await client.getSpaceActivities({
   count: 20,
-  order: "desc",
+  order: 'desc',
 });
 console.log(activities);
 ```
@@ -48,11 +48,11 @@ console.log(activities);
 ### OAuth2 Authentication
 
 ```typescript
-import { createClient } from "./src/mod.ts";
+import { createClient } from './src/mod.ts';
 
 const client = createClient({
-  host: "your-space.backlog.com",
-  accessToken: "your-oauth2-access-token",
+  host: 'your-space.backlog.com',
+  accessToken: 'your-oauth2-access-token',
 });
 
 const space = await client.getSpace();
@@ -68,6 +68,18 @@ console.log(space);
 - `getSpaceIcon()` - Download space icon/logo
 - `getSpaceNotification()` - Get space notification
 - `putSpaceNotification(params)` - Update space notification
+
+### Issue APIs
+
+- `postIssue(params)` - Create a new issue
+- `getIssue(issueIdOrKey)` - Get issue by ID or key
+- `getIssues(params)` - Get issue list with filters
+- `getIssueCount(params)` - Get issue count
+
+### Project APIs
+
+- `getProjects(params)` - Get project list
+- `getProject(projectIdOrKey)` - Get project by ID or key
 
 More APIs are being implemented. See [DEVELOPMENT.md](./DEVELOPMENT.md) for the roadmap.
 
