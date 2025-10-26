@@ -69,6 +69,18 @@ console.log(space);
 - `getSpaceNotification()` - Get space notification
 - `putSpaceNotification(params)` - Update space notification
 
+### Issue APIs
+
+- `postIssue(params)` - Create a new issue
+- `getIssue(issueIdOrKey)` - Get issue by ID or key
+- `getIssues(params)` - Get issue list with filters
+- `getIssueCount(params)` - Get issue count
+
+### Project APIs
+
+- `getProjects(params)` - Get project list
+- `getProject(projectIdOrKey)` - Get project by ID or key
+
 More APIs are being implemented. See [DEVELOPMENT.md](./DEVELOPMENT.md) for the roadmap.
 
 ## Development

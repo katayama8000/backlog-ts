@@ -9,10 +9,12 @@ export * from "./params.ts";
 export * from "./types.ts";
 export * from "./space.ts";
 export * from "./issue.ts";
+export * from "./project.ts";
 
 import type { BacklogConfig } from "./config.ts";
 import * as space from "./space.ts";
 import * as issue from "./issue.ts";
+import * as project from "./project.ts";
 
 /**
  * Backlog client interface
@@ -42,6 +44,14 @@ export interface BacklogClient {
   getIssueCount: (
     params?: Parameters<typeof issue.getIssueCount>[1],
   ) => ReturnType<typeof issue.getIssueCount>;
+
+  // Project APIs
+  getProjects: (
+    params?: Parameters<typeof project.getProjects>[1],
+  ) => ReturnType<typeof project.getProjects>;
+  getProject: (
+    projectIdOrKey: Parameters<typeof project.getProject>[1],
+  ) => ReturnType<typeof project.getProject>;
 }
 
 /**
@@ -67,5 +77,11 @@ export function createClient(config: BacklogConfig): BacklogClient {
     getIssues: (params?: Parameters<typeof issue.getIssues>[1]) => issue.getIssues(config, params),
     getIssueCount: (params?: Parameters<typeof issue.getIssueCount>[1]) =>
       issue.getIssueCount(config, params),
+
+    // Project APIs
+    getProjects: (params?: Parameters<typeof project.getProjects>[1]) =>
+      project.getProjects(config, params),
+    getProject: (projectIdOrKey: Parameters<typeof project.getProject>[1]) =>
+      project.getProject(config, projectIdOrKey),
   };
 }

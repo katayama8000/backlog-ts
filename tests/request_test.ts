@@ -310,3 +310,114 @@ Deno.test("download - error handling", async () => {
     server.close();
   }
 });
+
+Deno.test("request - error with non-JSON response", async () => {
+  const server = createMockServer(() => {
+    return new Response("Internal Server Error", {
+      status: 500,
+      headers: { "Content-Type": "text/plain" },
+    });
+  });
+
+  try {
+    const config: BacklogConfig = {
+      host: server.host,
+      apiKey: "test-key",
+    };
+
+    await assertRejects(
+      async () => await request(config, "test"),
+      Error,
+      "HTTP 500: Internal Server Error",
+    );
+  } finally {
+    server.close();
+  }
+});
+
+Deno.test(
+  "request - error without message falls back to Unknown error",
+  async () => {
+    const server = createMockServer(() => {
+      return new Response(
+        JSON.stringify({}), // Empty error object
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    });
+
+    try {
+      const config: BacklogConfig = {
+        host: server.host,
+        apiKey: "test-key",
+      };
+
+      await assertRejects(
+        async () => await request(config, "test"),
+        Error,
+        "Unknown error",
+      );
+    } finally {
+      server.close();
+    }
+  },
+);
+
+Deno.test({
+  name: "request - timeout with error response",
+  sanitizeResources: false,
+  sanitizeOps: false,
+  async fn() {
+    const server = createMockServer(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      return new Response(JSON.stringify({ message: "Error" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    });
+
+    try {
+      const config: BacklogConfig = {
+        host: server.host,
+        apiKey: "test-key",
+        timeout: 200, // Long enough to get error response
+      };
+
+      await assertRejects(async () => await request(config, "test"));
+    } finally {
+      server.close();
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+  },
+});
+
+Deno.test({
+  name: "request - timeout with successful response",
+  sanitizeResources: false,
+  sanitizeOps: false,
+  async fn() {
+    const server = createMockServer(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    });
+
+    try {
+      const config: BacklogConfig = {
+        host: server.host,
+        apiKey: "test-key",
+        timeout: 500,
+      };
+
+      const result = await request<{ success: boolean }>(config, "test");
+      assertEquals(result.success, true);
+    } finally {
+      server.close();
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+  },
+});
