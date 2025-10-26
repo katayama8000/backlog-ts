@@ -13,31 +13,6 @@ backlog-ts is a Deno-based API client for Backlog, ported from the original [bac
 - Comprehensive test coverage
 - Zero external dependencies
 
-## Project Structure
-
-```
-backlog-ts/
-├── deno.json              # Deno configuration and tasks
-├── README.md              # User-facing documentation
-├── DEVELOPMENT.md         # This file
-├── .gitignore            # Git ignore patterns
-├── .env.example          # Environment variable template
-├── src/                  # Source code
-│   ├── mod.ts           # Main entry point, exports public API
-│   ├── config.ts        # Configuration and error types
-│   ├── types.ts         # Common types (enums, unions)
-│   ├── params.ts        # API parameter interfaces
-│   ├── entities.ts      # API response entity interfaces
-│   ├── request.ts       # HTTP request handler functions
-│   └── space.ts         # Space API implementation
-└── tests/               # Test files
-    ├── client_test.ts      # Client creation tests
-    ├── params_test.ts      # Parameter type tests
-    ├── request_test.ts     # HTTP request tests (mocked)
-    ├── space_test.ts       # Space API tests (mocked)
-    └── integration_test.ts # Real API integration tests
-```
-
 ## Implemented Features
 
 ### Core Functionality
