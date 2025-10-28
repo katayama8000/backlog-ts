@@ -256,3 +256,40 @@ Deno.test({
     console.log("  Restored original notification");
   },
 });
+
+Deno.test({
+  name: "Integration: getDocument",
+  ignore: !isIntegrationTestEnabled,
+  async fn() {
+    const client = createTestClient();
+    const DOCUMENT_ID = Deno.env.get("BACKLOG_DOCUMENT_ID");
+
+    if (!DOCUMENT_ID) {
+      console.log("⚠️  BACKLOG_DOCUMENT_ID not set, skipping document test");
+      console.log(
+        "   Set BACKLOG_DOCUMENT_ID=<document-id> to test document retrieval",
+      );
+      return;
+    }
+
+    // Test with specific document ID
+    const document = await client.getDocument(DOCUMENT_ID);
+
+    assertExists(document);
+    assertExists(document.id);
+    assertExists(document.projectId);
+    assertExists(document.title);
+    assertEquals(typeof document.id, "string");
+    assertEquals(typeof document.projectId, "number");
+    assertEquals(typeof document.title, "string");
+
+    console.log("✓ Document:", document.title);
+    console.log(`  ID: ${document.id}, Project ID: ${document.projectId}`);
+    if (document.tags && document.tags.length > 0) {
+      console.log(`  Tags: ${document.tags.map((t) => t.name).join(", ")}`);
+    }
+    if (document.attachments && document.attachments.length > 0) {
+      console.log(`  Attachments: ${document.attachments.length} file(s)`);
+    }
+  },
+});

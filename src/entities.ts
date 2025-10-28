@@ -210,6 +210,14 @@ export interface IssueFileInfo extends FileInfo {
 }
 
 /**
+ * Document file info entity
+ */
+export interface DocumentFileInfo extends FileInfo {
+  createdUser: User;
+  created: string;
+}
+
+/**
  * Shared file entity
  */
 export interface SharedFile {
@@ -267,4 +275,61 @@ export interface Issue {
   attachments: IssueFileInfo[];
   sharedFiles: SharedFile[];
   stars: Star[];
+}
+
+/**
+ * Document tag entity
+ */
+export interface DocumentTag {
+  id: number;
+  name: string;
+}
+
+/**
+ * Document entity
+ */
+export interface Document {
+  id: string;
+  projectId: number;
+  title: string;
+  plain: string;
+  json: string;
+  statusId: number;
+  emoji: string | null;
+  attachments: DocumentFileInfo[];
+  tags: DocumentTag[];
+  createdUser: User;
+  created: string;
+  updatedUser: User;
+  updated: string;
+}
+
+/**
+ * Document tree node entity
+ */
+export interface DocumentTreeNode {
+  id: string;
+  name?: string;
+  children: DocumentTreeNode[];
+  statusId?: number;
+  emoji?: string;
+  emojiType?: string;
+  updated?: string;
+}
+
+/**
+ * Active/Trash tree entity
+ */
+export interface ActiveTrashTree {
+  id: string;
+  children: DocumentTreeNode[];
+}
+
+/**
+ * Document tree entity
+ */
+export interface DocumentTree {
+  projectId: string;
+  activeTree?: ActiveTrashTree;
+  trashTree?: ActiveTrashTree;
 }
