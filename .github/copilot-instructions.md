@@ -12,6 +12,7 @@ Authentication supports both API Key and OAuth 2.0.
 - Implement test code for each endpoint
 - Always write documentation comments
 - Use deno fmt and deno lint for code formatting and linting
+- **Always use double quotes (") for strings, not single quotes (')**
 - Write commit messages in English
 - Write Pull Request descriptions in English
 - Implement CI/CD using GitHub Actions

@@ -1,6 +1,6 @@
-import { assertEquals, assertExists } from "@std/assert";
-import { load } from "@std/dotenv";
-import { createClient } from "../src/mod.ts";
+import { assertEquals, assertExists } from '@std/assert';
+import { load } from '@std/dotenv';
+import { createClient } from '../src/mod.ts';
 
 /**
  * Integration tests for Backlog API
@@ -19,24 +19,25 @@ import { createClient } from "../src/mod.ts";
  */
 
 // Load .env file if it exists
-await load({ export: true, envPath: ".env" });
+await load({ export: true, envPath: '.env' });
 
-const BACKLOG_HOST = Deno.env.get("BACKLOG_HOST");
-const BACKLOG_API_KEY = Deno.env.get("BACKLOG_API_KEY");
-const BACKLOG_ACCESS_TOKEN = Deno.env.get("BACKLOG_ACCESS_TOKEN");
+const BACKLOG_HOST = Deno.env.get('BACKLOG_HOST');
+const BACKLOG_API_KEY = Deno.env.get('BACKLOG_API_KEY');
+const BACKLOG_ACCESS_TOKEN = Deno.env.get('BACKLOG_ACCESS_TOKEN');
 
-const isIntegrationTestEnabled = BACKLOG_HOST && (BACKLOG_API_KEY || BACKLOG_ACCESS_TOKEN);
+const isIntegrationTestEnabled =
+  BACKLOG_HOST && (BACKLOG_API_KEY || BACKLOG_ACCESS_TOKEN);
 
 // Show warning when integration tests are enabled
 if (isIntegrationTestEnabled) {
-  console.log("\n⚠️  WARNING: Integration tests are enabled!");
+  console.log('\n⚠️  WARNING: Integration tests are enabled!');
   console.log(`📡 Real API calls will be made to: ${BACKLOG_HOST}`);
-  console.log("💡 These tests will READ data from your Backlog space.\n");
+  console.log('💡 These tests will READ data from your Backlog space.\n');
 }
 
 function createTestClient() {
   if (!BACKLOG_HOST) {
-    throw new Error("BACKLOG_HOST environment variable is not set");
+    throw new Error('BACKLOG_HOST environment variable is not set');
   }
 
   if (BACKLOG_API_KEY) {
@@ -53,11 +54,11 @@ function createTestClient() {
     });
   }
 
-  throw new Error("Either BACKLOG_API_KEY or BACKLOG_ACCESS_TOKEN must be set");
+  throw new Error('Either BACKLOG_API_KEY or BACKLOG_ACCESS_TOKEN must be set');
 }
 
 Deno.test({
-  name: "Integration: getSpace",
+  name: 'Integration: getSpace',
   ignore: !isIntegrationTestEnabled,
   async fn() {
     const client = createTestClient();
@@ -67,22 +68,22 @@ Deno.test({
     assertExists(space.spaceKey);
     assertExists(space.name);
     assertExists(space.ownerId);
-    assertEquals(typeof space.spaceKey, "string");
-    assertEquals(typeof space.name, "string");
-    assertEquals(typeof space.ownerId, "number");
+    assertEquals(typeof space.spaceKey, 'string');
+    assertEquals(typeof space.name, 'string');
+    assertEquals(typeof space.ownerId, 'number');
 
-    console.log("✓ Space:", space.spaceKey, "-", space.name);
+    console.log('✓ Space:', space.spaceKey, '-', space.name);
   },
 });
 
 Deno.test({
-  name: "Integration: getSpaceActivities",
+  name: 'Integration: getSpaceActivities',
   ignore: !isIntegrationTestEnabled,
   async fn() {
     const client = createTestClient();
     const activities = await client.getSpaceActivities({
       count: 5,
-      order: "desc",
+      order: 'desc',
     });
 
     assertExists(activities);
@@ -93,28 +94,28 @@ Deno.test({
       assertExists(activity.id);
       assertExists(activity.type);
       assertExists(activity.createdUser);
-      assertEquals(typeof activity.id, "number");
-      assertEquals(typeof activity.type, "number");
+      assertEquals(typeof activity.id, 'number');
+      assertEquals(typeof activity.type, 'number');
 
       console.log(`✓ Retrieved ${activities.length} activities`);
       console.log(
-        `  Latest activity: ID=${activity.id}, Type=${activity.type}`,
+        `  Latest activity: ID=${activity.id}, Type=${activity.type}`
       );
     } else {
-      console.log("✓ No activities found (this is okay)");
+      console.log('✓ No activities found (this is okay)');
     }
   },
 });
 
 Deno.test({
-  name: "Integration: getSpaceActivities with activity type filter",
+  name: 'Integration: getSpaceActivities with activity type filter',
   ignore: !isIntegrationTestEnabled,
   async fn() {
     const client = createTestClient();
     const activities = await client.getSpaceActivities({
       activityTypeId: [1, 2, 3], // IssueCreated, IssueUpdated, IssueCommented
       count: 10,
-      order: "desc",
+      order: 'desc',
     });
 
     assertExists(activities);
@@ -125,7 +126,7 @@ Deno.test({
       assertEquals(
         [1, 2, 3].includes(activity.type),
         true,
-        `Activity type ${activity.type} should be in [1, 2, 3]`,
+        `Activity type ${activity.type} should be in [1, 2, 3]`
       );
     }
 
@@ -134,7 +135,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "Integration: getSpaceNotification",
+  name: 'Integration: getSpaceNotification',
   ignore: !isIntegrationTestEnabled,
   async fn() {
     const client = createTestClient();
@@ -143,18 +144,18 @@ Deno.test({
     assertExists(notification);
     // content can be empty string, so just check it exists
     assertExists(notification.content !== undefined);
-    assertEquals(typeof notification.content, "string");
+    assertEquals(typeof notification.content, 'string');
     // updated can be null in some cases
     if (notification.updated) {
-      assertEquals(typeof notification.updated, "string");
+      assertEquals(typeof notification.updated, 'string');
     }
 
-    console.log("✓ Space notification:", notification.content || "(empty)");
+    console.log('✓ Space notification:', notification.content || '(empty)');
   },
 });
 
 Deno.test({
-  name: "Integration: getSpaceIcon",
+  name: 'Integration: getSpaceIcon',
   ignore: !isIntegrationTestEnabled,
   async fn() {
     const client = createTestClient();
@@ -164,7 +165,7 @@ Deno.test({
     assertExists(icon.body);
     assertExists(icon.url);
     assertEquals(icon.body instanceof ArrayBuffer, true);
-    assertEquals(typeof icon.url, "string");
+    assertEquals(typeof icon.url, 'string');
 
     const sizeInKB = (icon.body.byteLength / 1024).toFixed(2);
     console.log(`✓ Space icon downloaded: ${sizeInKB} KB`);
@@ -175,7 +176,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "Integration: pagination test",
+  name: 'Integration: pagination test',
   ignore: !isIntegrationTestEnabled,
   async fn() {
     const client = createTestClient();
@@ -183,11 +184,11 @@ Deno.test({
     // Get first page
     const firstPage = await client.getSpaceActivities({
       count: 2,
-      order: "desc",
+      order: 'desc',
     });
 
     if (firstPage.length === 0) {
-      console.log("✓ No activities to test pagination");
+      console.log('✓ No activities to test pagination');
       return;
     }
 
@@ -195,7 +196,7 @@ Deno.test({
     const maxId = firstPage[firstPage.length - 1].id - 1;
     const secondPage = await client.getSpaceActivities({
       count: 2,
-      order: "desc",
+      order: 'desc',
       maxId: maxId,
     });
 
@@ -207,37 +208,37 @@ Deno.test({
       assertEquals(
         firstPageIds.includes(id),
         false,
-        "Pages should not overlap",
+        'Pages should not overlap'
       );
     }
 
     console.log(`✓ Pagination working correctly`);
-    console.log(`  First page: ${firstPageIds.join(", ")}`);
-    console.log(`  Second page: ${secondPageIds.join(", ")}`);
+    console.log(`  First page: ${firstPageIds.join(', ')}`);
+    console.log(`  Second page: ${secondPageIds.join(', ')}`);
   },
 });
 
 // Note: This test modifies data, so it's disabled by default
 // Set BACKLOG_ALLOW_WRITE_TESTS=true to enable
-const allowWriteTests = Deno.env.get("BACKLOG_ALLOW_WRITE_TESTS") === "true";
+const allowWriteTests = Deno.env.get('BACKLOG_ALLOW_WRITE_TESTS') === 'true';
 
 // Show additional warning when write tests are enabled
 if (isIntegrationTestEnabled && allowWriteTests) {
-  console.log("🚨 CRITICAL WARNING: Write tests are ENABLED!");
-  console.log("✏️  These tests will MODIFY data in your Backlog space!");
-  console.log("⚠️  Make sure you are using a test/development space.\n");
+  console.log('🚨 CRITICAL WARNING: Write tests are ENABLED!');
+  console.log('✏️  These tests will MODIFY data in your Backlog space!');
+  console.log('⚠️  Make sure you are using a test/development space.\n');
 }
 
 Deno.test({
-  name: "Integration: putSpaceNotification (write test)",
+  name: 'Integration: putSpaceNotification (write test)',
   ignore: !isIntegrationTestEnabled || !allowWriteTests,
   async fn() {
-    console.log("\n🚨 Writing data to Backlog API...");
+    console.log('\n🚨 Writing data to Backlog API...');
     const client = createTestClient();
 
     // Get current notification
     const current = await client.getSpaceNotification();
-    console.log("  Current notification:", current.content);
+    console.log('  Current notification:', current.content);
 
     // Update notification
     const testMessage = `[Test] Updated at ${new Date().toISOString()}`;
@@ -247,12 +248,49 @@ Deno.test({
 
     assertExists(updated);
     assertEquals(updated.content, testMessage);
-    console.log("✓ Updated notification:", updated.content);
+    console.log('✓ Updated notification:', updated.content);
 
     // Restore original notification
     await client.putSpaceNotification({
       content: current.content,
     });
-    console.log("  Restored original notification");
+    console.log('  Restored original notification');
+  },
+});
+
+Deno.test({
+  name: 'Integration: getDocument',
+  ignore: !isIntegrationTestEnabled,
+  async fn() {
+    const client = createTestClient();
+    const DOCUMENT_ID = Deno.env.get('BACKLOG_DOCUMENT_ID');
+
+    if (!DOCUMENT_ID) {
+      console.log('⚠️  BACKLOG_DOCUMENT_ID not set, skipping document test');
+      console.log(
+        '   Set BACKLOG_DOCUMENT_ID=<document-id> to test document retrieval'
+      );
+      return;
+    }
+
+    // Test with specific document ID
+    const document = await client.getDocument(DOCUMENT_ID);
+
+    assertExists(document);
+    assertExists(document.id);
+    assertExists(document.projectId);
+    assertExists(document.title);
+    assertEquals(typeof document.id, 'string');
+    assertEquals(typeof document.projectId, 'number');
+    assertEquals(typeof document.title, 'string');
+
+    console.log('✓ Document:', document.title);
+    console.log(`  ID: ${document.id}, Project ID: ${document.projectId}`);
+    if (document.tags && document.tags.length > 0) {
+      console.log(`  Tags: ${document.tags.map((t) => t.name).join(', ')}`);
+    }
+    if (document.attachments && document.attachments.length > 0) {
+      console.log(`  Attachments: ${document.attachments.length} file(s)`);
+    }
   },
 });
