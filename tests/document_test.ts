@@ -3,6 +3,102 @@ import { createClient } from "../src/mod.ts";
 import type { Document } from "../src/mod.ts";
 import { createMockServer } from "./test_utils.ts";
 
+Deno.test("getDocuments - success", async () => {
+  const mockDocuments: Document[] = [
+    {
+      id: "01939983409c79d5a06a49859789e38f",
+      projectId: 1,
+      title: "Hello",
+      plain: "hello",
+      json: "{}",
+      statusId: 1,
+      emoji: "🎉",
+      attachments: [],
+      tags: [
+        {
+          id: 1,
+          name: "Backlog",
+        },
+      ],
+      createdUser: {
+        id: 2,
+        userId: "woody",
+        name: "woody",
+        roleType: 1,
+        lang: "en",
+        mailAddress: "woody@nulab.com",
+      },
+      created: "2024-12-06T01:08:56Z",
+      updatedUser: {
+        id: 2,
+        userId: "woody",
+        name: "woody",
+        roleType: 1,
+        lang: "en",
+        mailAddress: "woody@nulab.com",
+      },
+      updated: "2025-04-28T01:47:02Z",
+    },
+    {
+      id: "0193b335c62173de9547bab5dd0b5324",
+      projectId: 1,
+      title: "top",
+      plain: "hello",
+      json: "{}",
+      statusId: 1,
+      emoji: null,
+      attachments: [],
+      tags: [],
+      createdUser: {
+        id: 2,
+        userId: "woody",
+        name: "woody",
+        roleType: 1,
+        lang: "en",
+        mailAddress: "woody@nulab.com",
+      },
+      created: "2024-12-06T01:08:56Z",
+      updatedUser: {
+        id: 2,
+        userId: "woody",
+        name: "woody",
+        roleType: 1,
+        lang: "en",
+        mailAddress: "woody@nulab.com",
+      },
+      updated: "2025-04-28T01:47:02Z",
+    },
+  ];
+
+  const server = createMockServer((req) => {
+    const url = new URL(req.url);
+    assertEquals(url.pathname, "/api/v2/documents");
+    assertEquals(url.searchParams.get("offset"), "0");
+
+    return new Response(JSON.stringify(mockDocuments), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  });
+
+  try {
+    const client = createClient({
+      host: server.host,
+      apiKey: "test-key",
+    });
+
+    const documents = await client.getDocuments({ offset: 0 });
+
+    assertEquals(documents.length, 2);
+    assertEquals(documents[0].id, "01939983409c79d5a06a49859789e38f");
+    assertEquals(documents[0].title, "Hello");
+    assertEquals(documents[1].id, "0193b335c62173de9547bab5dd0b5324");
+    assertEquals(documents[1].title, "top");
+  } finally {
+    server.close();
+  }
+});
+
 Deno.test("getDocument - success", async () => {
   const mockDocument: Document = {
     id: "0193b335c62173de9547bab5dd0b5324",

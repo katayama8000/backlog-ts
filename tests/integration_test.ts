@@ -293,3 +293,47 @@ Deno.test({
     }
   },
 });
+
+Deno.test({
+  name: "Integration: getDocuments",
+  ignore: !isIntegrationTestEnabled,
+  async fn() {
+    const client = createTestClient();
+    const PROJECT_ID_OR_KEY = Deno.env.get("BACKLOG_PROJECT_ID_OR_KEY");
+
+    if (!PROJECT_ID_OR_KEY) {
+      console.log(
+        "⚠️  BACKLOG_PROJECT_ID_OR_KEY not set, skipping getDocuments test",
+      );
+      console.log(
+        "   Set BACKLOG_PROJECT_ID_OR_KEY=<project-id-or-key> to test document list retrieval",
+      );
+      return;
+    }
+
+    // Get project to verify it exists
+    const project = await client.getProject(PROJECT_ID_OR_KEY);
+    const projectId = typeof PROJECT_ID_OR_KEY === "string" && isNaN(Number(PROJECT_ID_OR_KEY))
+      ? project.id
+      : Number(PROJECT_ID_OR_KEY);
+
+    // Get documents for the project
+    const documents = await client.getDocuments({
+      projectId: [projectId],
+      offset: 0,
+      count: 5,
+    });
+
+    assertExists(documents);
+    assertEquals(Array.isArray(documents), true);
+
+    console.log(
+      `✓ Retrieved ${documents.length} documents from project ${project.name}`,
+    );
+    if (documents.length > 0) {
+      console.log(
+        `  First document: "${documents[0].title}" (ID: ${documents[0].id})`,
+      );
+    }
+  },
+});
