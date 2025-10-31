@@ -337,3 +337,51 @@ Deno.test({
     }
   },
 });
+
+Deno.test({
+  name: "Integration: getDocumentTree",
+  ignore: !isIntegrationTestEnabled,
+  async fn() {
+    const client = createTestClient();
+    const PROJECT_ID_OR_KEY = Deno.env.get("BACKLOG_PROJECT_ID_OR_KEY");
+
+    if (!PROJECT_ID_OR_KEY) {
+      console.log(
+        "⚠️  BACKLOG_PROJECT_ID_OR_KEY not set, skipping getDocumentTree test",
+      );
+      console.log(
+        "   Set BACKLOG_PROJECT_ID_OR_KEY=<project-id-or-key> to test document tree retrieval",
+      );
+      return;
+    }
+
+    // Get document tree for the project
+    const tree = await client.getDocumentTree({
+      projectIdOrKey: PROJECT_ID_OR_KEY,
+    });
+
+    assertExists(tree);
+    assertExists(tree.projectId);
+    assertEquals(typeof tree.projectId, "number");
+
+    console.log(`✓ Retrieved document tree for project ${tree.projectId}`);
+
+    if (tree.activeTree) {
+      const countNodes = (nodes: typeof tree.activeTree.children): number => {
+        return nodes.reduce((sum, node) => sum + 1 + countNodes(node.children), 0);
+      };
+      const activeCount = countNodes(tree.activeTree.children);
+      console.log(`  Active documents: ${activeCount}`);
+
+      if (tree.activeTree.children.length > 0) {
+        const firstNode = tree.activeTree.children[0];
+        console.log(`  First node: "${firstNode.name}" (ID: ${firstNode.id})`);
+      }
+    }
+
+    if (tree.trashTree) {
+      const trashCount = tree.trashTree.children.length;
+      console.log(`  Trash documents: ${trashCount}`);
+    }
+  },
+});

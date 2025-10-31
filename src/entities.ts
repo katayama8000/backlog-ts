@@ -329,7 +329,7 @@ export interface ActiveTrashTree {
  * Document tree entity
  */
 export interface DocumentTree {
-  projectId: string;
+  projectId: number;
   activeTree?: ActiveTrashTree;
   trashTree?: ActiveTrashTree;
 }

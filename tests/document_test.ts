@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { createClient } from "../src/mod.ts";
-import type { Document } from "../src/mod.ts";
+import type { Document, DocumentTree } from "../src/mod.ts";
 import { createMockServer } from "./test_utils.ts";
 
 Deno.test("getDocuments - success", async () => {
@@ -179,6 +179,76 @@ Deno.test("getDocument - success", async () => {
     assertEquals(document.projectId, 1);
     assertEquals(document.attachments.length, 1);
     assertEquals(document.tags.length, 1);
+  } finally {
+    server.close();
+  }
+});
+
+Deno.test("getDocumentTree - success", async () => {
+  const mockDocumentTree: DocumentTree = {
+    projectId: 1,
+    activeTree: {
+      id: "Active",
+      children: [
+        {
+          id: "01934345404771adb2113d7792bb4351",
+          name: "local test",
+          children: [
+            {
+              id: "019347fc760c7b0abff04b44628c94d7",
+              name: "test2",
+              children: [
+                {
+                  id: "0192ff5990da76c289dee06b1f11fa01",
+                  name: "aaatest234",
+                  children: [],
+                },
+              ],
+              emoji: "",
+            },
+          ],
+          emoji: "",
+        },
+      ],
+    },
+    trashTree: {
+      id: "Trash",
+      children: [],
+    },
+  };
+
+  const server = createMockServer((req) => {
+    const url = new URL(req.url);
+    assertEquals(url.pathname, "/api/v2/documents/tree");
+    assertEquals(url.searchParams.get("projectIdOrKey"), "TEST_PROJECT");
+
+    return new Response(JSON.stringify(mockDocumentTree), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  });
+
+  try {
+    const client = createClient({
+      host: server.host,
+      apiKey: "test-key",
+    });
+
+    const tree = await client.getDocumentTree({
+      projectIdOrKey: "TEST_PROJECT",
+    });
+
+    assertEquals(tree.projectId, 1);
+    assertEquals(tree.activeTree?.id, "Active");
+    assertEquals(tree.activeTree?.children.length, 1);
+    assertEquals(
+      tree.activeTree?.children[0].id,
+      "01934345404771adb2113d7792bb4351",
+    );
+    assertEquals(tree.activeTree?.children[0].name, "local test");
+    assertEquals(tree.activeTree?.children[0].children.length, 1);
+    assertEquals(tree.trashTree?.id, "Trash");
+    assertEquals(tree.trashTree?.children.length, 0);
   } finally {
     server.close();
   }
