@@ -48,6 +48,9 @@ export interface BacklogClient {
   ) => ReturnType<typeof issue.getIssueCount>;
 
   // Document APIs
+  getDocuments: (
+    params: Parameters<typeof doc.getDocuments>[1],
+  ) => ReturnType<typeof doc.getDocuments>;
   getDocument: (
     documentId: Parameters<typeof doc.getDocument>[1],
   ) => ReturnType<typeof doc.getDocument>;
@@ -86,6 +89,8 @@ export function createClient(config: BacklogConfig): BacklogClient {
       issue.getIssueCount(config, params),
 
     // Document APIs
+    getDocuments: (params: Parameters<typeof doc.getDocuments>[1]) =>
+      doc.getDocuments(config, params),
     getDocument: (documentId: Parameters<typeof doc.getDocument>[1]) =>
       doc.getDocument(config, documentId),
 
