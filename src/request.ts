@@ -159,9 +159,14 @@ export async function download(
   let fileName: string | undefined;
 
   if (contentDisposition) {
-    const match = contentDisposition.match(/filename="?(.+?)"?$/);
+    let match = contentDisposition.match(/filename="?(.+?)"?$/);
     if (match) {
       fileName = match[1];
+    } else {
+      match = contentDisposition.match(/filename\*=UTF-8''(.+)$/);
+      if (match) {
+        fileName = decodeURIComponent(match[1]);
+      }
     }
   }
 

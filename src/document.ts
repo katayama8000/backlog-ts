@@ -1,7 +1,7 @@
 import type { BacklogConfig } from "./config.ts";
 import type { Document, DocumentTree } from "./entities.ts";
 import type { GetDocumentsParams, GetDocumentTreeParams } from "./params.ts";
-import { request } from "./request.ts";
+import { request, download } from "./request.ts";
 
 /**
  * Get document list
@@ -34,4 +34,19 @@ export async function getDocumentTree(
   params: GetDocumentTreeParams,
 ): Promise<DocumentTree> {
   return await request<DocumentTree>(config, "documents/tree", { params });
+}
+
+/**
+ * Download document attachment
+ * @see https://developer.nulab.com/docs/backlog/api/2/get-document-attachments/
+ */
+export async function downloadDocumentAttachment(
+  config: BacklogConfig,
+  documentId: string,
+  attachmentId: number,
+): Promise<{ body: ArrayBuffer; fileName?: string }> {
+  return await download(
+    config,
+    `documents/${documentId}/attachments/${attachmentId}`,
+  );
 }
