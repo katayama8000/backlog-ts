@@ -57,6 +57,10 @@ export interface BacklogClient {
   getDocumentTree: (
     params: Parameters<typeof doc.getDocumentTree>[1],
   ) => ReturnType<typeof doc.getDocumentTree>;
+  downloadDocumentAttachment: (
+    documentId: Parameters<typeof doc.downloadDocumentAttachment>[1],
+    attachmentId: Parameters<typeof doc.downloadDocumentAttachment>[2],
+  ) => ReturnType<typeof doc.downloadDocumentAttachment>;
 
   // Project APIs
   getProjects: (
@@ -98,6 +102,10 @@ export function createClient(config: BacklogConfig): BacklogClient {
       doc.getDocument(config, documentId),
     getDocumentTree: (params: Parameters<typeof doc.getDocumentTree>[1]) =>
       doc.getDocumentTree(config, params),
+    downloadDocumentAttachment: (
+      documentId: Parameters<typeof doc.downloadDocumentAttachment>[1],
+      attachmentId: Parameters<typeof doc.downloadDocumentAttachment>[2],
+    ) => doc.downloadDocumentAttachment(config, documentId, attachmentId),
 
     // Project APIs
     getProjects: (params?: Parameters<typeof project.getProjects>[1]) =>

@@ -253,3 +253,39 @@ Deno.test("getDocumentTree - success", async () => {
     server.close();
   }
 });
+
+Deno.test("downloadDocumentAttachment - success", async () => {
+  const server = createMockServer((req) => {
+    const url = new URL(req.url);
+    assertEquals(
+      url.pathname,
+      "/api/v2/documents/doc-id-123/attachments/456",
+    );
+
+    return new Response("file content", {
+      status: 200,
+      headers: {
+        "Content-Type": "application/octet-stream",
+        "Content-Disposition": 'attachment; filename="test.txt"',
+      },
+    });
+  });
+
+  try {
+    const client = createClient({
+      host: server.host,
+      apiKey: "test-key",
+    });
+
+    const file = await client.downloadDocumentAttachment(
+      "doc-id-123",
+      456,
+    );
+
+    assertEquals(file.fileName, "test.txt");
+    const decoder = new TextDecoder();
+    assertEquals(decoder.decode(file.body), "file content");
+  } finally {
+    server.close();
+  }
+});

@@ -37,6 +37,13 @@ backlog-ts is a Deno-based API client for Backlog, ported from the original [bac
 - ✅ `getIssues` - Get issue list with filters
 - ✅ `getIssueCount` - Get issue count with filters
 
+### Document APIs
+
+- ✅ `getDocuments` - Get document list
+- ✅ `getDocument` - Get document by ID
+- ✅ `getDocumentTree` - Get document tree
+- ✅ `downloadDocumentAttachment` - Download a document attachment
+
 ### Project APIs
 
 - ✅ `getProjects` - Get project list
@@ -47,135 +54,60 @@ backlog-ts is a Deno-based API client for Backlog, ported from the original [bac
 - ✅ API Key authentication
 - ✅ OAuth2 token authentication
 
+## Development Process
+
+When adding a new API endpoint, follow these steps:
+
+1. **Implement the API function:** Add the new function to the relevant file in the `src/` directory (e.g., `src/document.ts` for document-related APIs).
+2. **Export the function:** Export the new function from `src/mod.ts` and add it to the `BacklogClient` interface and the `createClient` factory function.
+3. **Add a unit test:** Create a unit test for the new function in the corresponding file under the `tests/` directory (e.g., `tests/document_test.ts`). Mock the API response to test the function in isolation.
+4. **Add an integration test:** Add an integration test for the new function in `tests/integration_test.ts`. This test will make a real API call to the Backlog service.
+
 ## Development Commands
 
-```bash
-# Run unit and mock tests only (fast, no API key required)
-deno task test
+- `deno task test`: Runs fast unit and mock server tests. Does not require network access beyond the mock server.
+- `deno task test:all`: Runs all tests, including unit, mock, and integration tests. Requires environment variables to be set for integration tests.
+- `deno task test:integration`: Runs only the integration tests, which make real API calls.
+- `deno task test:watch`: Runs all tests in watch mode, re-running them when files change.
+- `deno task check`: Performs type checking on the codebase.
+- `deno task lint`: Lints the code for style and potential errors.
+- `deno task fmt`: Formats the code according to the project's style.
 
-# Run all tests including integration tests
-deno task test:all
+## Testing
 
-# Run integration tests only
-deno task test:integration
+This project has three types of tests:
 
-# Run tests in watch mode
-deno task test:watch
+1. **Unit Tests:** Simple tests that verify type structures and client creation without making network requests.
+2. **Mock Server Tests:** Tests that use Deno's built-in HTTP server to mock Backlog API responses. These are the preferred way to test API endpoint logic as they run fast and don't require credentials.
+3. **Integration Tests:** Tests that make actual API calls to a real Backlog space. These are for verifying real-world compatibility.
 
-# Type checking
-deno task check
+### Running Tests
 
-# Linting
-deno task lint
+- To run only the fast unit and mock tests, use `deno task test`.
+- To run all tests, including integration tests, use `deno task test:all`.
 
-# Code formatting
-deno task fmt
-```
+### Integration Tests
 
-## Testing Strategy
+To run the integration tests, you need to provide credentials for a Backlog space.
 
-### Unit Tests
-
-Simple tests that verify type structures and client creation without making network requests.
-
-- `tests/client_test.ts` - Client factory function tests
-- `tests/params_test.ts` - Parameter interface tests
-
-### Mock Server Tests (Recommended)
-
-Tests that use Deno's built-in HTTP server to mock Backlog API responses. These tests:
-
-- Run fast (no real network calls)
-- Don't require API credentials
-- Test HTTP request/response handling
-- Verify error handling
-
-Files:
-
-- `tests/request_test.ts` - HTTP request handling (GET, POST, PUT, DELETE, timeouts, errors)
-- `tests/space_test.ts` - Space API endpoints with various scenarios
-
-### Integration Tests (Real API)
-
-Tests that make actual API calls to Backlog. These tests:
-
-- Verify real API compatibility
-- Require valid credentials
-- Are slower and rate-limited
-- Can be used for manual verification
-
-File: `tests/integration_test.ts`
-
-## Running Integration Tests
-
-Integration tests require Backlog API credentials and make real API calls.
-
-### Setup
-
-1. Copy the example environment file:
-
+1. **Create a `.env` file:**
    ```bash
    cp .env.example .env
    ```
+2. **Edit `.env`:** Fill in the required variables, such as `BACKLOG_HOST`, `BACKLOG_API_KEY`, and any other variables needed for the specific test (e.g., `BACKLOG_DOCUMENT_ID`, `BACKLOG_ATTACHMENT_ID`).
 
-2. Edit `.env` with your credentials:
-   ```bash
-   BACKLOG_HOST=your-space.backlog.com
-   BACKLOG_API_KEY=your-api-key
-   # OR
-   # BACKLOG_ACCESS_TOKEN=your-oauth2-token
-   ```
-
-### Execution
-
-```bash
-# Run integration tests only
-deno task test:integration
-# Output:
-# ⚠️  WARNING: Integration tests are enabled!
-# 📡 Real API calls will be made to: your-space.backlog.com
-# 💡 These tests will READ data from your Backlog space.
-
-# Run all tests (unit + mock + integration)
-deno task test:all
-```
+The integration tests are designed to be skipped if the required environment variables are not set.
 
 ### Write Tests (Data Modification)
 
-By default, integration tests only perform read operations. To enable write tests:
+Some integration tests modify data in your Backlog space. These are disabled by default. To enable them, set the `BACKLOG_ALLOW_WRITE_TESTS` environment variable to `true`.
 
 ```bash
 export BACKLOG_ALLOW_WRITE_TESTS=true
 deno task test:integration
-# Output:
-# 🚨 CRITICAL WARNING: Write tests are ENABLED!
-# ✏️  These tests will MODIFY data in your Backlog space!
-# ⚠️  Make sure you are using a test/development space.
 ```
 
-**Warning:** Write tests will modify data in your Backlog space. Only use this with test/development spaces.
-
-## Warning Messages
-
-Integration tests display warning messages to prevent accidental data modification:
-
-### Read-Only Tests
-
-```
-⚠️  WARNING: Integration tests are enabled!
-📡 Real API calls will be made to: your-space.backlog.com
-💡 These tests will READ data from your Backlog space.
-```
-
-### Write Tests
-
-```
-🚨 CRITICAL WARNING: Write tests are ENABLED!
-✏️  These tests will MODIFY data in your Backlog space!
-⚠️  Make sure you are using a test/development space.
-```
-
-These warnings help prevent accidental production data modification.
+**Warning:** Only run write tests on a dedicated test space, as they will modify data.
 
 ## Coding Guidelines
 
