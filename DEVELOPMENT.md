@@ -58,10 +58,10 @@ backlog-ts is a Deno-based API client for Backlog, ported from the original [bac
 
 When adding a new API endpoint, follow these steps:
 
-1.  **Implement the API function:** Add the new function to the relevant file in the `src/` directory (e.g., `src/document.ts` for document-related APIs).
-2.  **Export the function:** Export the new function from `src/mod.ts` and add it to the `BacklogClient` interface and the `createClient` factory function.
-3.  **Add a unit test:** Create a unit test for the new function in the corresponding file under the `tests/` directory (e.g., `tests/document_test.ts`). Mock the API response to test the function in isolation.
-4.  **Add an integration test:** Add an integration test for the new function in `tests/integration_test.ts`. This test will make a real API call to the Backlog service.
+1. **Implement the API function:** Add the new function to the relevant file in the `src/` directory (e.g., `src/document.ts` for document-related APIs).
+2. **Export the function:** Export the new function from `src/mod.ts` and add it to the `BacklogClient` interface and the `createClient` factory function.
+3. **Add a unit test:** Create a unit test for the new function in the corresponding file under the `tests/` directory (e.g., `tests/document_test.ts`). Mock the API response to test the function in isolation.
+4. **Add an integration test:** Add an integration test for the new function in `tests/integration_test.ts`. This test will make a real API call to the Backlog service.
 
 ## Development Commands
 
@@ -77,9 +77,9 @@ When adding a new API endpoint, follow these steps:
 
 This project has three types of tests:
 
-1.  **Unit Tests:** Simple tests that verify type structures and client creation without making network requests.
-2.  **Mock Server Tests:** Tests that use Deno's built-in HTTP server to mock Backlog API responses. These are the preferred way to test API endpoint logic as they run fast and don't require credentials.
-3.  **Integration Tests:** Tests that make actual API calls to a real Backlog space. These are for verifying real-world compatibility.
+1. **Unit Tests:** Simple tests that verify type structures and client creation without making network requests.
+2. **Mock Server Tests:** Tests that use Deno's built-in HTTP server to mock Backlog API responses. These are the preferred way to test API endpoint logic as they run fast and don't require credentials.
+3. **Integration Tests:** Tests that make actual API calls to a real Backlog space. These are for verifying real-world compatibility.
 
 ### Running Tests
 
@@ -90,11 +90,11 @@ This project has three types of tests:
 
 To run the integration tests, you need to provide credentials for a Backlog space.
 
-1.  **Create a `.env` file:**
-    ```bash
-    cp .env.example .env
-    ```
-2.  **Edit `.env`:** Fill in the required variables, such as `BACKLOG_HOST`, `BACKLOG_API_KEY`, and any other variables needed for the specific test (e.g., `BACKLOG_DOCUMENT_ID`, `BACKLOG_ATTACHMENT_ID`).
+1. **Create a `.env` file:**
+   ```bash
+   cp .env.example .env
+   ```
+2. **Edit `.env`:** Fill in the required variables, such as `BACKLOG_HOST`, `BACKLOG_API_KEY`, and any other variables needed for the specific test (e.g., `BACKLOG_DOCUMENT_ID`, `BACKLOG_ATTACHMENT_ID`).
 
 The integration tests are designed to be skipped if the required environment variables are not set.
 

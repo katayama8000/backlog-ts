@@ -24,10 +24,10 @@ Authentication supports both API Key and OAuth 2.0.
 
 When adding a new API endpoint, follow these steps:
 
-1.  **Implement the API function:** Add the new function to the relevant file in the `src/` directory (e.g., `src/document.ts` for document-related APIs).
-2.  **Export the function:** Export the new function from `src/mod.ts` and add it to the `BacklogClient` interface and the `createClient` factory function.
-3.  **Add a unit test:** Create a unit test for the new function in the corresponding file under the `tests/` directory (e.g., `tests/document_test.ts`). Mock the API response to test the function in isolation.
-4.  **Add an integration test:** Add an integration test for the new function in `tests/integration_test.ts`. This test will make a real API call to the Backlog service.
+1. **Implement the API function:** Add the new function to the relevant file in the `src/` directory (e.g., `src/document.ts` for document-related APIs).
+2. **Export the function:** Export the new function from `src/mod.ts` and add it to the `BacklogClient` interface and the `createClient` factory function.
+3. **Add a unit test:** Create a unit test for the new function in the corresponding file under the `tests/` directory (e.g., `tests/document_test.ts`). Mock the API response to test the function in isolation.
+4. **Add an integration test:** Add an integration test for the new function in `tests/integration_test.ts`. This test will make a real API call to the Backlog service.
 
 # Testing
 
@@ -47,7 +47,7 @@ deno test --allow-net --allow-read --allow-env
 
 Integration tests make real API calls to your Backlog space and require credentials.
 
-1.  **Create a `.env` file:** Copy the `.env.example` file to a new file named `.env`.
-2.  **Set environment variables:** Fill in the required variables in the `.env` file, such as `BACKLOG_HOST`, `BACKLOG_API_KEY`, and any other variables needed for the specific test (e.g., `BACKLOG_DOCUMENT_ID`, `BACKLOG_ATTACHMENT_ID`).
+1. **Create a `.env` file:** Copy the `.env.example` file to a new file named `.env`.
+2. **Set environment variables:** Fill in the required variables in the `.env` file, such as `BACKLOG_HOST`, `BACKLOG_API_KEY`, and any other variables needed for the specific test (e.g., `BACKLOG_DOCUMENT_ID`, `BACKLOG_ATTACHMENT_ID`).
 
 The integration tests are designed to be skipped if the required environment variables are not set.

@@ -266,7 +266,7 @@ Deno.test("downloadDocumentAttachment - success", async () => {
       status: 200,
       headers: {
         "Content-Type": "application/octet-stream",
-        "Content-Disposition": "attachment; filename=\"test.txt\"",
+        "Content-Disposition": 'attachment; filename="test.txt"',
       },
     });
   });

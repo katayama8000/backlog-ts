@@ -395,7 +395,9 @@ Deno.test({
     const ATTACHMENT_ID = Deno.env.get("BACKLOG_ATTACHMENT_ID");
 
     if (!DOCUMENT_ID || !ATTACHMENT_ID) {
-      console.log("⚠️  BACKLOG_DOCUMENT_ID and BACKLOG_ATTACHMENT_ID must be set for this test, skipping.");
+      console.log(
+        "⚠️  BACKLOG_DOCUMENT_ID and BACKLOG_ATTACHMENT_ID must be set for this test, skipping.",
+      );
       return;
     }
 
@@ -408,6 +410,8 @@ Deno.test({
     assertExists(file.body);
     assertExists(file.fileName);
     assertEquals(file.body instanceof ArrayBuffer, true);
-    console.log(`✓ Downloaded attachment "${file.fileName}" (${(file.body.byteLength / 1024).toFixed(2)} KB)`);
+    console.log(
+      `✓ Downloaded attachment "${file.fileName}" (${(file.body.byteLength / 1024).toFixed(2)} KB)`,
+    );
   },
 });
