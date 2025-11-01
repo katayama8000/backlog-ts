@@ -27,6 +27,10 @@ export interface GetDocumentsParams {
   count?: number;
 }
 
+export interface GetDocumentTreeParams {
+  projectIdOrKey: string;
+}
+
 /**
  * Space related parameters
  */
