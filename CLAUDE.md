@@ -55,11 +55,13 @@ cp .env.example .env
 ```
 
 Required variables:
+
 - `BACKLOG_HOST`: Your Backlog space host (e.g., "your-space.backlog.com")
 - `BACKLOG_API_KEY`: Your API key OR
 - `BACKLOG_ACCESS_TOKEN`: Your OAuth2 access token
 
 For specific tests:
+
 - `BACKLOG_PROJECT_ID_OR_KEY`: Project ID or key for document-related tests
 - `BACKLOG_DOCUMENT_ID`: Document ID for document-specific tests
 - `BACKLOG_ATTACHMENT_ID`: Attachment ID for download tests
@@ -92,6 +94,7 @@ The project uses a factory pattern with `createClient()` that returns an object 
 ### Testing Architecture
 
 The project has three types of tests:
+
 1. **Unit tests**: Basic tests for type structures and client creation
 2. **Mock server tests**: Uses Deno's HTTP server to mock API responses
 3. **Integration tests**: Makes real API calls to Backlog
