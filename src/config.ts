@@ -1,4 +1,74 @@
 /**
+ * Logger interface for request/response logging
+ */
+export interface Logger {
+  /**
+   * Log request details before sending
+   * @param method HTTP method
+   * @param url Request URL
+   * @param headers Request headers
+   * @param body Request body (if any)
+   */
+  request?(method: string, url: string, headers: Record<string, string>, body?: unknown): void;
+
+  /**
+   * Log response details after receiving
+   * @param method Original HTTP method
+   * @param url Original request URL
+   * @param status Response status code
+   * @param headers Response headers
+   * @param body Response body (if any)
+   * @param duration Request duration in milliseconds
+   */
+  response?(
+    method: string,
+    url: string,
+    status: number,
+    headers: Headers,
+    body: unknown,
+    duration: number,
+  ): void;
+
+  /**
+   * Log error details
+   * @param method Original HTTP method
+   * @param url Original request URL
+   * @param error Error object
+   * @param duration Request duration in milliseconds
+   */
+  error?(method: string, url: string, error: unknown, duration: number): void;
+}
+
+/**
+ * Default logger that logs to console
+ */
+export const consoleLogger: Logger = {
+  request(method, url, _headers, body) {
+    const sanitizedUrl = url.replace(/apiKey=([^&]+)/, "apiKey=****");
+    console.log(`🔼 [${method}] ${sanitizedUrl}`);
+    if (body) {
+      console.log("Request Body:", typeof body === "string" ? body : JSON.stringify(body, null, 2));
+    }
+  },
+  response(method, url, status, _headers, body, duration) {
+    const sanitizedUrl = url.replace(/apiKey=([^&]+)/, "apiKey=****");
+    console.log(
+      `🔽 [${method}] ${sanitizedUrl} - ${status} (${duration.toFixed(2)}ms)`,
+    );
+    if (body && typeof body !== "string" && !(body instanceof ArrayBuffer)) {
+      console.log("Response Body:", JSON.stringify(body, null, 2));
+    }
+  },
+  error(method, url, error, duration) {
+    const sanitizedUrl = url.replace(/apiKey=([^&]+)/, "apiKey=****");
+    console.error(
+      `❌ [${method}] ${sanitizedUrl} - Error (${duration.toFixed(2)}ms)`,
+      error,
+    );
+  },
+};
+
+/**
  * Backlog client configuration
  */
 export interface BacklogConfig {
@@ -10,6 +80,8 @@ export interface BacklogConfig {
   accessToken?: string;
   /** Request timeout in milliseconds */
   timeout?: number;
+  /** Logger for request/response logging */
+  logger?: Logger;
 }
 
 /**

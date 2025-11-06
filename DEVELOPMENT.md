@@ -54,6 +54,12 @@ backlog-ts is a Deno-based API client for Backlog, ported from the original [bac
 - ✅ API Key authentication
 - ✅ OAuth2 token authentication
 
+### Utility Features
+
+- ✅ Request/response logging
+- ⬜ Rate limiting support
+- ⬜ Retry logic for failed requests
+
 ## Development Process
 
 When adding a new API endpoint, follow these steps:
@@ -156,9 +162,9 @@ export async function getSpace(config: BacklogConfig): Promise<Space> {
 
 ### Future Enhancements
 
+- ✅ Request/response logging
 - Rate limiting support
 - Retry logic for failed requests
-- Request/response logging
 - WebHook utilities
 - CLI tool
 

@@ -13,6 +13,7 @@ A Backlog API client for Deno.
 - 🔒 Fully type-safe API client
 - ⚡ Function-based design (no classes)
 - 🔑 Supports API Key and OAuth2 authentication
+- 📝 Configurable request/response logging
 - ✅ Comprehensive test coverage with mock servers
 
 ## Installation
@@ -57,6 +58,39 @@ const client = createClient({
 
 const space = await client.getSpace();
 console.log(space);
+```
+
+### Request/Response Logging
+
+```typescript
+import { consoleLogger, createClient } from "jsr:@katayama8000/backlog-ts";
+
+// Use built-in console logger
+const client = createClient({
+  host: "your-space.backlog.com",
+  apiKey: "your-api-key",
+  logger: consoleLogger,
+});
+
+// Or use a custom logger
+const clientWithCustomLogger = createClient({
+  host: "your-space.backlog.com",
+  apiKey: "your-api-key",
+  logger: {
+    request(method, url, headers, body) {
+      console.log(`[${method}] ${url}`);
+    },
+    response(method, url, status, headers, body, duration) {
+      console.log(`[${method}] ${url} - ${status} (${duration.toFixed(2)}ms)`);
+    },
+    error(method, url, error, duration) {
+      console.error(`[${method}] ${url} - Error: ${error}`);
+    },
+  },
+});
+
+// Make requests with logging
+const space = await client.getSpace();
 ```
 
 ## Available APIs
