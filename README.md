@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/katayama8000/backlog-ts/branch/main/graph/badge.svg)](https://codecov.io/gh/katayama8000/backlog-ts)
 [![JSR](https://jsr.io/badges/@katayama8000/backlog-ts)](https://jsr.io/@katayama8000/backlog-ts)
 
-A Backlog API client for Deno.
+A Backlog API client for Deno. This library is unofficial but [the developer](https://github.com/katayama8000) who created this library works at Nulab, the company behind Backlog.
 
 ## Features
 
