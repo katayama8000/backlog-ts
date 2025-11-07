@@ -3,29 +3,42 @@ import { createClient } from "../src/mod.ts";
 import type { BacklogConfig } from "../src/config.ts";
 
 /**
- * Mock server for testing retry logic
+ * Mock server configuration for testing retry logic
  */
-class RetryMockServer {
-  private port: number;
-  private server: Deno.HttpServer | null = null;
-  private requestCount = 0;
+interface MockServerOptions {
+  failureCount: number;
+  statusCode?: number;
+  delayMs?: number;
+}
 
-  constructor(port = 8899) {
-    this.port = port;
-  }
+/**
+ * Mock server state
+ */
+interface MockServerState {
+  port: number;
+  server: Deno.HttpServer | null;
+  requestCount: number;
+}
 
-  /**
-   * Start the mock server
-   */
-  start(options: {
-    failureCount: number;
-    statusCode?: number;
-    delayMs?: number;
-  }) {
-    this.requestCount = 0;
+/**
+ * Create a mock server for testing retry logic
+ */
+function createRetryMockServer(port = 8899): {
+  start: (options: MockServerOptions) => void;
+  stop: () => Promise<void>;
+  getRequestCount: () => number;
+} {
+  const state: MockServerState = {
+    port,
+    server: null,
+    requestCount: 0,
+  };
+
+  const start = (options: MockServerOptions) => {
+    state.requestCount = 0;
 
     const handler = async (_request: Request): Promise<Response> => {
-      this.requestCount++;
+      state.requestCount++;
 
       // Add delay if specified
       if (options.delayMs) {
@@ -33,11 +46,11 @@ class RetryMockServer {
       }
 
       // Fail for the first N requests
-      if (this.requestCount <= options.failureCount) {
+      if (state.requestCount <= options.failureCount) {
         const statusCode = options.statusCode || 500;
         return new Response(
           JSON.stringify({
-            message: `Mock error ${this.requestCount}`,
+            message: `Mock error ${state.requestCount}`,
             code: statusCode,
           }),
           {
@@ -67,29 +80,27 @@ class RetryMockServer {
       );
     };
 
-    this.server = Deno.serve({ port: this.port, hostname: "localhost" }, handler);
-  }
+    state.server = Deno.serve({ port: state.port, hostname: "localhost" }, handler);
+  };
 
-  /**
-   * Stop the mock server
-   */
-  async stop() {
-    if (this.server) {
-      await this.server.shutdown();
-      this.server = null;
+  const stop = async () => {
+    if (state.server) {
+      await state.server.shutdown();
+      state.server = null;
     }
-  }
+  };
 
-  /**
-   * Get the number of requests received
-   */
-  getRequestCount(): number {
-    return this.requestCount;
-  }
+  const getRequestCount = () => state.requestCount;
+
+  return {
+    start,
+    stop,
+    getRequestCount,
+  };
 }
 
 Deno.test("Retry logic - successful retry after failure", async () => {
-  const server = new RetryMockServer();
+  const server = createRetryMockServer();
 
   try {
     // Start server that fails once, then succeeds
@@ -117,7 +128,7 @@ Deno.test("Retry logic - successful retry after failure", async () => {
 });
 
 Deno.test("Retry logic - exhausts retry attempts", async () => {
-  const server = new RetryMockServer();
+  const server = createRetryMockServer();
 
   try {
     // Start server that always fails with 500
@@ -149,7 +160,7 @@ Deno.test("Retry logic - exhausts retry attempts", async () => {
 });
 
 Deno.test("Retry logic - non-retryable status code", async () => {
-  const server = new RetryMockServer();
+  const server = createRetryMockServer();
 
   try {
     // Start server that always fails with 404 (non-retryable by default)
@@ -180,7 +191,7 @@ Deno.test("Retry logic - non-retryable status code", async () => {
 });
 
 Deno.test("Retry logic - retry on rate limiting (429)", async () => {
-  const server = new RetryMockServer();
+  const server = createRetryMockServer();
 
   try {
     // Start server that fails twice with 429, then succeeds
@@ -208,7 +219,7 @@ Deno.test("Retry logic - retry on rate limiting (429)", async () => {
 });
 
 Deno.test("Retry logic - exponential backoff", async () => {
-  const server = new RetryMockServer();
+  const server = createRetryMockServer();
 
   try {
     // Start server that fails twice, then succeeds
@@ -245,7 +256,7 @@ Deno.test("Retry logic - exponential backoff", async () => {
 });
 
 Deno.test("Retry logic - custom retryable status codes", async () => {
-  const server = new RetryMockServer();
+  const server = createRetryMockServer();
 
   try {
     // Start server that fails with 418 (I'm a teapot)
@@ -274,7 +285,7 @@ Deno.test("Retry logic - custom retryable status codes", async () => {
 });
 
 Deno.test("Retry logic - disabled (maxAttempts = 1)", async () => {
-  const server = new RetryMockServer();
+  const server = createRetryMockServer();
 
   try {
     // Start server that always fails
