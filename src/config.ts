@@ -69,6 +69,22 @@ export const consoleLogger: Logger = {
 };
 
 /**
+ * Retry configuration
+ */
+export interface RetryConfig {
+  /** Maximum number of retry attempts (default: 3) */
+  maxAttempts?: number;
+  /** Base delay between retries in milliseconds (default: 1000) */
+  baseDelay?: number;
+  /** Maximum delay between retries in milliseconds (default: 30000) */
+  maxDelay?: number;
+  /** HTTP status codes to retry on (default: [429, 500, 502, 503, 504]) */
+  retryableStatusCodes?: number[];
+  /** Whether to use exponential backoff (default: true) */
+  exponentialBackoff?: boolean;
+}
+
+/**
  * Backlog client configuration
  */
 export interface BacklogConfig {
@@ -82,6 +98,8 @@ export interface BacklogConfig {
   timeout?: number;
   /** Logger for request/response logging */
   logger?: Logger;
+  /** Retry configuration for failed requests */
+  retry?: RetryConfig;
 }
 
 /**

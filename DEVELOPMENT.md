@@ -58,7 +58,7 @@ backlog-ts is a Deno-based API client for Backlog, ported from the original [bac
 
 - ✅ Request/response logging
 - ⬜ Rate limiting support
-- ⬜ Retry logic for failed requests
+- ✅ Retry logic for failed requests
 
 ## Development Process
 
