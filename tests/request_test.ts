@@ -316,8 +316,8 @@ Deno.test({
   sanitizeResources: false, // Added to avoid resource leak errors
   async fn() {
     const server = createMockServer(() => {
-      return new Response("Internal Server Error", {
-        status: 500,
+      return new Response("Bad Request", {
+        status: 400, // Use 400 instead of 500 to avoid retry
         headers: { "Content-Type": "text/plain" },
       });
     });
@@ -350,7 +350,7 @@ Deno.test({
       return new Response(
         JSON.stringify({}), // Empty error object
         {
-          status: 500,
+          status: 400, // Use 400 instead of 500 to avoid retry
           headers: { "Content-Type": "application/json" },
         },
       );

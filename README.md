@@ -93,6 +93,55 @@ const clientWithCustomLogger = createClient({
 const space = await client.getSpace();
 ```
 
+### Request Retry Configuration
+
+Configure automatic retry logic for failed requests:
+
+```typescript
+import { createClient } from "jsr:@katayama8000/backlog-ts";
+
+const client = createClient({
+  host: "your-space.backlog.com",
+  apiKey: "your-api-key",
+  retry: {
+    maxAttempts: 3, // Maximum retry attempts (default: 3)
+    baseDelay: 1000, // Base delay in milliseconds (default: 1000)
+    maxDelay: 30000, // Maximum delay between retries (default: 30000)
+    exponentialBackoff: true, // Use exponential backoff (default: true)
+    retryableStatusCodes: [ // HTTP status codes to retry (default: [429, 500, 502, 503, 504])
+      429, // Too Many Requests (rate limiting)
+      500, // Internal Server Error
+      502, // Bad Gateway
+      503, // Service Unavailable
+      504, // Gateway Timeout
+    ],
+  },
+});
+
+// Requests will be automatically retried on network errors and specified status codes
+const space = await client.getSpace();
+```
+
+**Retry Behavior:**
+
+- **Network errors** (connection timeouts, DNS failures) are automatically retried
+- **Rate limiting (429)** and **server errors (5xx)** are retried by default
+- **Client errors (4xx)** except rate limiting are not retried
+- **Exponential backoff** with jitter helps avoid thundering herd issues
+- **Maximum delay** prevents excessively long wait times
+
+To disable retry completely:
+
+```typescript
+const client = createClient({
+  host: "your-space.backlog.com",
+  apiKey: "your-api-key",
+  retry: {
+    maxAttempts: 1, // Disable retry
+  },
+});
+```
+
 ## Available APIs
 
 ### Space APIs

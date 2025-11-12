@@ -1,4 +1,62 @@
-import type { BacklogConfig, BacklogError } from "./config.ts";
+import type { BacklogConfig, BacklogError, RetryConfig } from "./config.ts";
+
+/**
+ * Default retry configuration
+ */
+const DEFAULT_RETRY_CONFIG: Required<RetryConfig> = {
+  maxAttempts: 3,
+  baseDelay: 1000,
+  maxDelay: 30000,
+  retryableStatusCodes: [429, 500, 502, 503, 504],
+  exponentialBackoff: true,
+};
+
+/**
+ * Check if an error is retryable
+ */
+function isRetryableError(error: unknown): boolean {
+  // Network errors (fetch throws)
+  if (error instanceof TypeError && error.message.includes("fetch")) {
+    return true;
+  }
+
+  // AbortError (timeout) should not be retried by default
+  if (error instanceof Error && error.name === "AbortError") {
+    return false;
+  }
+
+  return false;
+}
+
+/**
+ * Check if a status code is retryable
+ */
+function isRetryableStatusCode(statusCode: number, retryConfig: Required<RetryConfig>): boolean {
+  return retryConfig.retryableStatusCodes.includes(statusCode);
+}
+
+/**
+ * Calculate delay for the next retry attempt
+ */
+function calculateRetryDelay(attempt: number, retryConfig: Required<RetryConfig>): number {
+  if (!retryConfig.exponentialBackoff) {
+    return retryConfig.baseDelay;
+  }
+
+  // Exponential backoff with jitter
+  const exponentialDelay = retryConfig.baseDelay * Math.pow(2, attempt - 1);
+  const jitter = Math.random() * 0.1 * exponentialDelay; // Add up to 10% jitter
+  const delay = exponentialDelay + jitter;
+
+  return Math.min(delay, retryConfig.maxDelay);
+}
+
+/**
+ * Sleep for a given number of milliseconds
+ */
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 /**
  * Build query string from parameters
@@ -60,28 +118,76 @@ function buildHeaders(config: BacklogConfig): Record<string, string> {
 }
 
 /**
- * Handle API error response
+ * Execute a single HTTP request attempt
  */
-async function handleErrorResponse(response: Response): Promise<never> {
-  let errorData: BacklogError;
+async function executeRequest<T>(
+  url: string,
+  requestOptions: RequestInit,
+  logger?: BacklogConfig["logger"],
+  method: string = "GET",
+): Promise<{ response: Response; data: T; duration: number }> {
+  const startTime = performance.now();
 
   try {
-    errorData = (await response.json()) as BacklogError;
-  } catch {
-    // For non-JSON responses, create an error with status and text
-    errorData = {
-      message: `HTTP ${response.status}: ${response.statusText}`,
-      code: response.status,
-    };
-  }
+    const response = await fetch(url, requestOptions);
+    const duration = performance.now() - startTime;
 
-  throw new Error(
-    errorData.errors?.[0]?.message || errorData.message || "Unknown error",
-  );
+    if (!response.ok) {
+      // For non-ok responses, we need to handle them specially for retry logic
+      let errorData: BacklogError;
+
+      try {
+        errorData = (await response.json()) as BacklogError;
+      } catch {
+        errorData = {
+          message: `HTTP ${response.status}: ${response.statusText}`,
+          code: response.status,
+        };
+      }
+
+      // Log error if logger is configured
+      if (logger?.error) {
+        logger.error(method, url, errorData, duration);
+      }
+
+      // Create a custom error that includes the status code for retry logic
+      const error = new Error(
+        errorData.errors?.[0]?.message || errorData.message || "Unknown error",
+      ) as Error & { status?: number };
+      error.status = response.status;
+
+      throw error;
+    }
+
+    // Clone the response so we can read it twice
+    const responseClone = response.clone();
+    const data = await response.json() as T;
+
+    // Log response if logger is configured
+    if (logger?.response) {
+      logger.response(
+        method,
+        url,
+        responseClone.status,
+        responseClone.headers,
+        data,
+        duration,
+      );
+    }
+
+    return { response: responseClone, data, duration };
+  } catch (error) {
+    const duration = performance.now() - startTime;
+
+    // Re-throw with duration for potential logging
+    const errorWithDuration = error as Error & { duration?: number };
+    errorWithDuration.duration = duration;
+    throw errorWithDuration;
+  }
 }
 
 /**
- * Send HTTP request
+ * Send HTTP request with retry logic
  */
 export async function request<T>(
   config: BacklogConfig,
@@ -98,6 +204,12 @@ export async function request<T>(
   const url = buildUrl(config, path, options.params);
   const headers = buildHeaders(config);
   const logger = config.logger;
+
+  // Merge retry configuration with defaults
+  const retryConfig: Required<RetryConfig> = {
+    ...DEFAULT_RETRY_CONFIG,
+    ...config.retry,
+  };
 
   const requestOptions: RequestInit = {
     method,
@@ -118,123 +230,73 @@ export async function request<T>(
     );
   }
 
-  // Start timing the request
-  const startTime = performance.now();
+  let lastError: Error | undefined;
+  let attempt = 0;
 
-  if (config.timeout) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), config.timeout);
-    requestOptions.signal = controller.signal;
+  while (attempt < retryConfig.maxAttempts) {
+    attempt++;
 
     try {
-      const response = await fetch(url, requestOptions);
-      clearTimeout(timeoutId);
-      const duration = performance.now() - startTime;
+      // Handle timeout if configured
+      if (config.timeout) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), config.timeout);
+        requestOptions.signal = controller.signal;
 
-      if (!response.ok) {
         try {
-          // Clone the response before handling the error so we can read it twice
-          const responseClone = response.clone();
-          const errorData = await response.json();
-
-          // Log error if logger is configured
-          if (logger?.error) {
-            logger.error(method, url, errorData, duration);
-          }
-
-          // Pass the clone to error handler
-          await handleErrorResponse(responseClone);
-        } catch (parseError) {
-          // If we can't parse the error response as JSON
-          if (logger?.error) {
-            logger.error(method, url, parseError, duration);
-          }
-          throw parseError;
+          const result = await executeRequest<T>(url, requestOptions, logger, method);
+          clearTimeout(timeoutId);
+          return result.data;
+        } catch (error) {
+          clearTimeout(timeoutId);
+          throw error;
         }
+      } else {
+        const result = await executeRequest<T>(url, requestOptions, logger, method);
+        return result.data;
       }
-
-      // Clone the response so we can read it twice (once for logging, once for returning)
-      const responseClone = response.clone();
-      const responseData = await response.json() as T;
-
-      // Log response if logger is configured
-      if (logger?.response) {
-        logger.response(
-          method,
-          url,
-          responseClone.status,
-          responseClone.headers,
-          responseData,
-          duration,
-        );
-      }
-
-      return responseData;
     } catch (error) {
-      clearTimeout(timeoutId);
-      const duration = performance.now() - startTime;
+      lastError = error as Error;
+      const errorWithStatus = error as Error & { status?: number; duration?: number };
 
-      // Log error if logger is configured
-      if (logger?.error) {
-        logger.error(method, url, error, duration);
+      // Log error on final attempt or non-retryable errors
+      const shouldRetry = attempt < retryConfig.maxAttempts &&
+        (isRetryableError(error) ||
+          (errorWithStatus.status && isRetryableStatusCode(errorWithStatus.status, retryConfig)));
+
+      if (!shouldRetry && logger?.error) {
+        logger.error(method, url, error, errorWithStatus.duration || 0);
       }
 
-      throw error;
+      if (!shouldRetry) {
+        break;
+      }
+
+      // Calculate delay for next retry
+      if (attempt < retryConfig.maxAttempts) {
+        const delay = calculateRetryDelay(attempt, retryConfig);
+
+        if (logger?.error) {
+          logger.error(
+            method,
+            url,
+            `Attempt ${attempt}/${retryConfig.maxAttempts} failed, retrying in ${delay}ms: ${
+              lastError.message || "Unknown error"
+            }`,
+            errorWithStatus.duration || 0,
+          );
+        }
+
+        await sleep(delay);
+      }
     }
   }
 
-  try {
-    const response = await fetch(url, requestOptions);
-    const duration = performance.now() - startTime;
-
-    if (!response.ok) {
-      try {
-        // Clone the response before handling the error so we can read it twice
-        const responseClone = response.clone();
-        const errorData = await response.json();
-
-        // Log error if logger is configured
-        if (logger?.error) {
-          logger.error(method, url, errorData, duration);
-        }
-
-        // Pass the clone to error handler
-        await handleErrorResponse(responseClone);
-      } catch (parseError) {
-        // If we can't parse the error response as JSON
-        if (logger?.error) {
-          logger.error(method, url, parseError, duration);
-        }
-        throw parseError;
-      }
-    }
-
-    // Clone the response so we can read it twice (once for logging, once for returning)
-    const responseClone = response.clone();
-    const responseData = await response.json() as T;
-
-    // Log response if logger is configured
-    if (logger?.response) {
-      logger.response(
-        method,
-        url,
-        responseClone.status,
-        responseClone.headers,
-        responseData,
-        duration,
-      );
-    }
-
-    return responseData;
-  } catch (error) {
-    const duration = performance.now() - startTime;
-
-    // Log error if logger is configured
-    if (logger?.error) {
-      logger.error(method, url, error, duration);
-    }
-
-    throw error;
+  // If we get here, all retries failed
+  if (lastError) {
+    throw lastError;
+  } else {
+    throw new Error("Request failed after all retry attempts");
   }
 }
 
@@ -266,35 +328,25 @@ export async function download(
     const duration = performance.now() - startTime;
 
     if (!response.ok) {
+      // Try to parse error as JSON if possible
+      let errorData: BacklogError;
       try {
-        // Clone the response before handling the error
-        const responseClone = response.clone();
-
-        // Try to parse error as JSON if possible
-        let errorData;
-        try {
-          errorData = await response.json();
-        } catch {
-          errorData = {
-            message: `HTTP ${response.status}: ${response.statusText}`,
-            code: response.status,
-          };
-        }
-
-        // Log error if logger is configured
-        if (logger?.error) {
-          logger.error(method, url, errorData, duration);
-        }
-
-        // Pass the clone to error handler
-        await handleErrorResponse(responseClone);
-      } catch (parseError) {
-        // If we can't parse the error response as JSON
-        if (logger?.error) {
-          logger.error(method, url, parseError, duration);
-        }
-        throw parseError;
+        errorData = await response.json();
+      } catch {
+        errorData = {
+          message: `HTTP ${response.status}: ${response.statusText}`,
+          code: response.status,
+        };
       }
+
+      // Log error if logger is configured
+      if (logger?.error) {
+        logger.error(method, url, errorData, duration);
+      }
+
+      throw new Error(
+        errorData.errors?.[0]?.message || errorData.message || "Unknown error",
+      );
     }
 
     const body = await response.arrayBuffer();
