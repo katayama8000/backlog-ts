@@ -14,7 +14,7 @@ const DEFAULT_RETRY_CONFIG: Required<RetryConfig> = {
 /**
  * Check if an error is retryable
  */
-function isRetryableError(error: unknown, _retryConfig: Required<RetryConfig>): boolean {
+function isRetryableError(error: unknown): boolean {
   // Network errors (fetch throws)
   if (error instanceof TypeError && error.message.includes("fetch")) {
     return true;
@@ -261,7 +261,7 @@ export async function request<T>(
 
       // Log error on final attempt or non-retryable errors
       const shouldRetry = attempt < retryConfig.maxAttempts &&
-        (isRetryableError(error, retryConfig) ||
+        (isRetryableError(error) ||
           (errorWithStatus.status && isRetryableStatusCode(errorWithStatus.status, retryConfig)));
 
       if (!shouldRetry && logger?.error) {
@@ -277,11 +277,12 @@ export async function request<T>(
         const delay = calculateRetryDelay(attempt, retryConfig);
 
         if (logger?.error) {
-          const errorMessage = lastError.message || "Unknown error";
           logger.error(
             method,
             url,
-            `Attempt ${attempt}/${retryConfig.maxAttempts} failed, retrying in ${delay}ms: ${errorMessage}`,
+            `Attempt ${attempt}/${retryConfig.maxAttempts} failed, retrying in ${delay}ms: ${
+              lastError.message || "Unknown error"
+            }`,
             errorWithStatus.duration || 0,
           );
         }

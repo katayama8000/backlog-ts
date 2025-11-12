@@ -113,7 +113,10 @@ Deno.test("Logger - error handling", async () => {
       }
     }
 
-    // Verify logs - should be 3 logs: request, error from response parsing, and final error
+    // Verify logs - should be 3 logs:
+    // 1. request log
+    // 2. error log from executeRequest (response parsing)
+    // 3. error log from request function (non-retryable error, final throw)
     assertEquals(logs.length, 3);
 
     // Check request log

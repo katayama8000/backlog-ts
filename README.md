@@ -106,29 +106,6 @@ const client = createClient({
   retry: {
     maxAttempts: 3, // Maximum retry attempts (default: 3)
     baseDelay: 1000, // Base delay in milliseconds (default: 1000)
-    maxDelay: 30000, // Maximum delay in milliseconds (default: 30000)
-    exponentialBackoff: true, // Use exponential backoff (default: true)
-    retryableStatusCodes: [ // HTTP status codes to retry on
-      429,
-      500,
-      502,
-      503,
-      504, // (default: [429, 500, 502, 503, 504])
-    ],
-  },
-});
-
-// Requests will be automatically retried on network errors
-// and retryable HTTP status codes
-const space = await client.getSpace();
-import { createClient } from "jsr:@katayama8000/backlog-ts";
-
-const client = createClient({
-  host: "your-space.backlog.com",
-  apiKey: "your-api-key",
-  retry: {
-    maxAttempts: 3, // Maximum retry attempts (default: 3)
-    baseDelay: 1000, // Base delay in milliseconds (default: 1000)
     maxDelay: 30000, // Maximum delay between retries (default: 30000)
     exponentialBackoff: true, // Use exponential backoff (default: true)
     retryableStatusCodes: [ // HTTP status codes to retry (default: [429, 500, 502, 503, 504])
