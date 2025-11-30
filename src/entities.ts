@@ -31,6 +31,7 @@ export interface User {
   roleType: number;
   lang: string;
   mailAddress: string;
+  lastLoginTime?: string;
   nulabAccount?: {
     nulabId: string;
     name: string;
@@ -237,11 +238,18 @@ export interface SharedFile {
  */
 export interface Star {
   id: number;
-  comment: string | null;
+  comment?: string;
   url: string;
   title: string;
   presenter: User;
   created: string;
+}
+
+/**
+ * Star count entity
+ */
+export interface StarCount {
+  count: number;
 }
 
 /**
@@ -332,4 +340,42 @@ export interface DocumentTree {
   projectId: number;
   activeTree?: ActiveTrashTree;
   trashTree?: ActiveTrashTree;
+}
+
+/**
+ * Recently viewed issue entity
+ */
+export interface RecentlyViewedIssue {
+  issue: Issue;
+  updated: string;
+}
+
+/**
+ * Recently viewed project entity
+ */
+export interface RecentlyViewedProject {
+  project: Project;
+  updated: string;
+}
+
+/**
+ * Wiki list item entity
+ */
+export interface WikiListItem {
+  id: number;
+  projectId: number;
+  name: string;
+  tags: DocumentTag[];
+  createdUser: User;
+  created: string;
+  updatedUser: User;
+  updated: string;
+}
+
+/**
+ * Recently viewed wiki entity
+ */
+export interface RecentlyViewedWiki {
+  page: WikiListItem;
+  updated: string;
 }
