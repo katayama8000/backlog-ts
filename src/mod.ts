@@ -11,12 +11,14 @@ export * from "./space.ts";
 export * from "./issue.ts";
 export * from "./document.ts";
 export * from "./project.ts";
+export * from "./user.ts";
 
 import type { BacklogConfig } from "./config.ts";
 import * as space from "./space.ts";
 import * as issue from "./issue.ts";
 import * as doc from "./document.ts";
 import * as project from "./project.ts";
+import * as user from "./user.ts";
 
 /**
  * Backlog client interface
@@ -69,6 +71,47 @@ export interface BacklogClient {
   getProject: (
     projectIdOrKey: Parameters<typeof project.getProject>[1],
   ) => ReturnType<typeof project.getProject>;
+
+  // User APIs
+  getUsers: () => ReturnType<typeof user.getUsers>;
+  getUser: (
+    userId: Parameters<typeof user.getUser>[1],
+  ) => ReturnType<typeof user.getUser>;
+  postUser: (
+    params: Parameters<typeof user.postUser>[1],
+  ) => ReturnType<typeof user.postUser>;
+  patchUser: (
+    userId: Parameters<typeof user.patchUser>[1],
+    params: Parameters<typeof user.patchUser>[2],
+  ) => ReturnType<typeof user.patchUser>;
+  deleteUser: (
+    userId: Parameters<typeof user.deleteUser>[1],
+  ) => ReturnType<typeof user.deleteUser>;
+  getMyself: () => ReturnType<typeof user.getMyself>;
+  getUserIcon: (
+    userId: Parameters<typeof user.getUserIcon>[1],
+  ) => ReturnType<typeof user.getUserIcon>;
+  getUserActivities: (
+    userId: Parameters<typeof user.getUserActivities>[1],
+    params: Parameters<typeof user.getUserActivities>[2],
+  ) => ReturnType<typeof user.getUserActivities>;
+  getUserStars: (
+    userId: Parameters<typeof user.getUserStars>[1],
+    params: Parameters<typeof user.getUserStars>[2],
+  ) => ReturnType<typeof user.getUserStars>;
+  getUserStarsCount: (
+    userId: Parameters<typeof user.getUserStarsCount>[1],
+    params: Parameters<typeof user.getUserStarsCount>[2],
+  ) => ReturnType<typeof user.getUserStarsCount>;
+  getRecentlyViewedIssues: (
+    params: Parameters<typeof user.getRecentlyViewedIssues>[1],
+  ) => ReturnType<typeof user.getRecentlyViewedIssues>;
+  getRecentlyViewedProjects: (
+    params: Parameters<typeof user.getRecentlyViewedProjects>[1],
+  ) => ReturnType<typeof user.getRecentlyViewedProjects>;
+  getRecentlyViewedWikis: (
+    params: Parameters<typeof user.getRecentlyViewedWikis>[1],
+  ) => ReturnType<typeof user.getRecentlyViewedWikis>;
 }
 
 /**
@@ -112,5 +155,39 @@ export function createClient(config: BacklogConfig): BacklogClient {
       project.getProjects(config, params),
     getProject: (projectIdOrKey: Parameters<typeof project.getProject>[1]) =>
       project.getProject(config, projectIdOrKey),
+
+    // User APIs
+    getUsers: () => user.getUsers(config),
+    getUser: (userId: Parameters<typeof user.getUser>[1]) => user.getUser(config, userId),
+    postUser: (params: Parameters<typeof user.postUser>[1]) => user.postUser(config, params),
+    patchUser: (
+      userId: Parameters<typeof user.patchUser>[1],
+      params: Parameters<typeof user.patchUser>[2],
+    ) => user.patchUser(config, userId, params),
+    deleteUser: (userId: Parameters<typeof user.deleteUser>[1]) => user.deleteUser(config, userId),
+    getMyself: () => user.getMyself(config),
+    getUserIcon: (userId: Parameters<typeof user.getUserIcon>[1]) =>
+      user.getUserIcon(config, userId),
+    getUserActivities: (
+      userId: Parameters<typeof user.getUserActivities>[1],
+      params: Parameters<typeof user.getUserActivities>[2],
+    ) => user.getUserActivities(config, userId, params),
+    getUserStars: (
+      userId: Parameters<typeof user.getUserStars>[1],
+      params: Parameters<typeof user.getUserStars>[2],
+    ) => user.getUserStars(config, userId, params),
+    getUserStarsCount: (
+      userId: Parameters<typeof user.getUserStarsCount>[1],
+      params: Parameters<typeof user.getUserStarsCount>[2],
+    ) => user.getUserStarsCount(config, userId, params),
+    getRecentlyViewedIssues: (
+      params: Parameters<typeof user.getRecentlyViewedIssues>[1],
+    ) => user.getRecentlyViewedIssues(config, params),
+    getRecentlyViewedProjects: (
+      params: Parameters<typeof user.getRecentlyViewedProjects>[1],
+    ) => user.getRecentlyViewedProjects(config, params),
+    getRecentlyViewedWikis: (
+      params: Parameters<typeof user.getRecentlyViewedWikis>[1],
+    ) => user.getRecentlyViewedWikis(config, params),
   };
 }

@@ -109,3 +109,47 @@ export interface GetIssuesParams {
   parentIssueId?: number[];
   keyword?: string;
 }
+
+/**
+ * User related parameters
+ */
+export interface PostUserParams {
+  userId: string;
+  password: string;
+  name: string;
+  mailAddress: string;
+  roleType: number;
+}
+
+export interface PatchUserParams {
+  password?: string;
+  name?: string;
+  mailAddress?: string;
+  roleType?: number;
+}
+
+export interface GetUserActivitiesParams {
+  activityTypeId?: ActivityType[];
+  minId?: number;
+  maxId?: number;
+  count?: number;
+  order?: Order;
+}
+
+export interface GetUserStarsParams {
+  minId?: number;
+  maxId?: number;
+  count?: number;
+  order?: Order;
+}
+
+export interface GetUserStarsCountParams {
+  since?: string;
+  until?: string;
+}
+
+export interface GetRecentlyViewedParams {
+  order?: Order;
+  offset?: number;
+  count?: number;
+}

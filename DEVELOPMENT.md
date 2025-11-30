@@ -49,6 +49,22 @@ backlog-ts is a Deno-based API client for Backlog, ported from the original [bac
 - ✅ `getProjects` - Get project list
 - ✅ `getProject` - Get project by ID or key
 
+### User APIs
+
+- ✅ `getUsers` - Get user list
+- ✅ `getUser` - Get user by ID
+- ✅ `postUser` - Add a new user
+- ✅ `patchUser` - Update user information
+- ✅ `deleteUser` - Delete a user
+- ✅ `getMyself` - Get own user information
+- ✅ `getUserIcon` - Download user icon
+- ✅ `getUserActivities` - Get user's recent activities
+- ✅ `getUserStars` - Get stars received by user
+- ✅ `getUserStarsCount` - Count user's received stars
+- ✅ `getRecentlyViewedIssues` - Get recently viewed issues
+- ✅ `getRecentlyViewedProjects` - Get recently viewed projects
+- ✅ `getRecentlyViewedWikis` - Get recently viewed wikis
+
 ### Authentication
 
 - ✅ API Key authentication
@@ -155,7 +171,7 @@ export async function getSpace(config: BacklogConfig): Promise<Space> {
 1. ✅ Implement Project APIs
 2. ✅ Implement Issue APIs
 3. Implement Wiki APIs
-4. Implement User APIs
+4. ✅ Implement User APIs
 5. Implement Git/SVN repository APIs
 6. ✅ Set up GitHub Actions CI/CD
 7. ✅ Publish to JSR (JavaScript Registry)

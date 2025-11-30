@@ -171,6 +171,22 @@ const client = createClient({
 - `getDocumentTree(params)` - Get document tree
 - `downloadDocumentAttachment(documentId, attachmentId)` - Download a document attachment
 
+### User APIs
+
+- `getUsers()` - Get user list
+- `getUser(userId)` - Get user by ID
+- `postUser(params)` - Add a new user
+- `patchUser(userId, params)` - Update user information
+- `deleteUser(userId)` - Delete a user
+- `getMyself()` - Get own user information
+- `getUserIcon(userId)` - Download user icon
+- `getUserActivities(userId, params)` - Get user's recent activities
+- `getUserStars(userId, params)` - Get stars received by user
+- `getUserStarsCount(userId, params)` - Count user's received stars
+- `getRecentlyViewedIssues(params)` - Get recently viewed issues
+- `getRecentlyViewedProjects(params)` - Get recently viewed projects
+- `getRecentlyViewedWikis(params)` - Get recently viewed wikis
+
 More APIs are being implemented.
 
 ## Contributing
