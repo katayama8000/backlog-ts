@@ -175,9 +175,9 @@ const client = createClient({
 
 - `getUsers()` - Get user list
 - `getUser(userId)` - Get user by ID
-- `postUser(params)` - Add a new user
-- `patchUser(userId, params)` - Update user information
-- `deleteUser(userId)` - Delete a user
+- `postUser(params)` - Add a new user (Not available in new plan spaces)
+- `patchUser(userId, params)` - Update user information (Not available in new plan spaces)
+- `deleteUser(userId)` - Delete a user (Not available in new plan spaces)
 - `getMyself()` - Get own user information
 - `getUserIcon(userId)` - Download user icon
 - `getUserActivities(userId, params)` - Get user's recent activities

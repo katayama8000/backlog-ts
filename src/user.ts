@@ -40,6 +40,7 @@ export async function getUser(
 
 /**
  * Add user
+ * Note: You can't use this API at new plan space.
  * @see https://developer.nulab.com/docs/backlog/api/2/add-user/
  */
 export async function postUser(
@@ -54,6 +55,7 @@ export async function postUser(
 
 /**
  * Update user
+ * Note: You can't use this API at new plan space.
  * @see https://developer.nulab.com/docs/backlog/api/2/update-user/
  */
 export async function patchUser(
@@ -69,6 +71,7 @@ export async function patchUser(
 
 /**
  * Delete user
+ * Note: You can't use this API at new plan space.
  * @see https://developer.nulab.com/docs/backlog/api/2/delete-user/
  */
 export async function deleteUser(
