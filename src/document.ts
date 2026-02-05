@@ -64,3 +64,16 @@ export async function addDocument(
     body: params,
   });
 }
+
+/**
+ * Delete document
+ * @see https://developer.nulab.com/docs/backlog/api/2/delete-document/
+ */
+export async function deleteDocument(
+  config: BacklogConfig,
+  documentId: string,
+): Promise<Document> {
+  return await request<Document>(config, `documents/${documentId}`, {
+    method: "DELETE",
+  });
+}
