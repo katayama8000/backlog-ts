@@ -33,8 +33,8 @@ export interface GetDocumentTreeParams {
 
 export interface AddDocumentParams {
   projectId: number;
-  title: string;
-  content: string;
+  title?: string;
+  content?: string;
   emoji?: string;
   parentId?: string;
   addLast?: boolean;

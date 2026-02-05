@@ -368,7 +368,10 @@ Deno.test({
 
     if (tree.activeTree) {
       const countNodes = (nodes: typeof tree.activeTree.children): number => {
-        return nodes.reduce((sum, node) => sum + 1 + countNodes(node.children), 0);
+        return nodes.reduce(
+          (sum, node) => sum + 1 + countNodes(node.children),
+          0,
+        );
       };
       const activeCount = countNodes(tree.activeTree.children);
       console.log(`  Active documents: ${activeCount}`);
@@ -451,6 +454,8 @@ Deno.test({
     assertEquals(newDocument.title, uniqueTitle);
     assertEquals(newDocument.plain, documentContent);
     assertEquals(newDocument.emoji, "📝");
-    console.log(`✓ Added document: "${newDocument.title}" (ID: ${newDocument.id})`);
+    console.log(
+      `✓ Added document: "${newDocument.title}" (ID: ${newDocument.id})`,
+    );
   },
 });
