@@ -368,7 +368,10 @@ Deno.test({
 
     if (tree.activeTree) {
       const countNodes = (nodes: typeof tree.activeTree.children): number => {
-        return nodes.reduce((sum, node) => sum + 1 + countNodes(node.children), 0);
+        return nodes.reduce(
+          (sum, node) => sum + 1 + countNodes(node.children),
+          0,
+        );
       };
       const activeCount = countNodes(tree.activeTree.children);
       console.log(`  Active documents: ${activeCount}`);
@@ -412,6 +415,47 @@ Deno.test({
     assertEquals(file.body instanceof ArrayBuffer, true);
     console.log(
       `✓ Downloaded attachment "${file.fileName}" (${(file.body.byteLength / 1024).toFixed(2)} KB)`,
+    );
+  },
+});
+
+Deno.test({
+  name: "Integration: addDocument (write test)",
+  ignore: !isIntegrationTestEnabled || !allowWriteTests,
+  async fn() {
+    console.log("\n🚨 Writing data to Backlog API (addDocument)...");
+    const client = createTestClient();
+    const PROJECT_ID_OR_KEY = Deno.env.get("BACKLOG_PROJECT_ID_OR_KEY");
+
+    if (!PROJECT_ID_OR_KEY) {
+      console.log(
+        "⚠️  BACKLOG_PROJECT_ID_OR_KEY not set, skipping addDocument test",
+      );
+      return;
+    }
+
+    const project = await client.getProject(PROJECT_ID_OR_KEY);
+    const projectId = typeof PROJECT_ID_OR_KEY === "string" && isNaN(Number(PROJECT_ID_OR_KEY))
+      ? project.id
+      : Number(PROJECT_ID_OR_KEY);
+
+    const uniqueTitle = `Test Document from Gemini - ${new Date().toISOString()}`;
+    const documentContent = "This is a test document created by Gemini in an E2E test.";
+
+    const newDocument = await client.addDocument({
+      projectId: projectId,
+      title: uniqueTitle,
+      content: documentContent,
+      emoji: "📝",
+      addLast: true,
+    });
+
+    assertExists(newDocument);
+    assertEquals(newDocument.title, uniqueTitle);
+    assertEquals(newDocument.plain, documentContent);
+    assertEquals(newDocument.emoji, "📝");
+    console.log(
+      `✓ Added document: "${newDocument.title}" (ID: ${newDocument.id})`,
     );
   },
 });

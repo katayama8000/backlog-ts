@@ -31,6 +31,15 @@ export interface GetDocumentTreeParams {
   projectIdOrKey: string;
 }
 
+export interface AddDocumentParams {
+  projectId: number;
+  title?: string;
+  content?: string;
+  emoji?: string;
+  parentId?: string;
+  addLast?: boolean;
+}
+
 /**
  * Space related parameters
  */
