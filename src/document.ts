@@ -1,6 +1,10 @@
 import type { BacklogConfig } from "./config.ts";
 import type { Document, DocumentTree } from "./entities.ts";
-import type { GetDocumentsParams, GetDocumentTreeParams } from "./params.ts";
+import type {
+  AddDocumentParams,
+  GetDocumentsParams,
+  GetDocumentTreeParams,
+} from "./params.ts";
 import { download, request } from "./request.ts";
 
 /**
@@ -49,4 +53,18 @@ export async function downloadDocumentAttachment(
     config,
     `documents/${documentId}/attachments/${attachmentId}`,
   );
+}
+
+/**
+ * Add document
+ * @see https://developer.nulab.com/docs/backlog/api/2/add-document/
+ */
+export async function addDocument(
+  config: BacklogConfig,
+  params: AddDocumentParams,
+): Promise<Document> {
+  return await request<Document>(config, "documents", {
+    method: "POST",
+    body: params,
+  });
 }

@@ -289,3 +289,70 @@ Deno.test("downloadDocumentAttachment - success", async () => {
     server.close();
   }
 });
+Deno.test("addDocument - success", async () => {
+  const mockDocument: Document = {
+    id: "0193b335c62173de9547bab5dd0b5324",
+    projectId: 1,
+    title: "top",
+    plain: "hello",
+    json: "{}",
+    statusId: 1,
+    emoji: null,
+    attachments: [],
+    tags: [],
+    createdUser: {
+      id: 2,
+      userId: "woody",
+      name: "woody",
+      roleType: 1,
+      lang: "en",
+      mailAddress: "woody@nulab.com",
+    },
+    created: "2024-12-06T01:08:56Z",
+    updatedUser: {
+      id: 2,
+      userId: "woody",
+      name: "woody",
+      roleType: 1,
+      lang: "en",
+      mailAddress: "woody@nulab.com",
+    },
+    updated: "2025-04-28T01:47:02Z",
+  };
+
+  const server = createMockServer(async (req) => {
+    const url = new URL(req.url);
+    assertEquals(url.pathname, "/api/v2/documents");
+    assertEquals(req.method, "POST");
+
+    const body = await req.json();
+    assertEquals(body.projectId, 1);
+    assertEquals(body.title, "top");
+    assertEquals(body.content, "hello");
+
+    return new Response(JSON.stringify(mockDocument), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  });
+
+  try {
+    const client = createClient({
+      host: server.host,
+      apiKey: "test-key",
+    });
+
+    const document = await client.addDocument({
+      projectId: 1,
+      title: "top",
+      content: "hello",
+    });
+
+    assertEquals(document.id, "0193b335c62173de9547bab5dd0b5324");
+    assertEquals(document.title, "top");
+    assertEquals(document.plain, "hello");
+    assertEquals(document.projectId, 1);
+  } finally {
+    server.close();
+  }
+});
