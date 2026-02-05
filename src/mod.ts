@@ -59,6 +59,9 @@ export interface BacklogClient {
   addDocument: (
     params: Parameters<typeof doc.addDocument>[1],
   ) => ReturnType<typeof doc.addDocument>;
+  deleteDocument: (
+    documentId: Parameters<typeof doc.deleteDocument>[1],
+  ) => ReturnType<typeof doc.deleteDocument>;
   getDocumentTree: (
     params: Parameters<typeof doc.getDocumentTree>[1],
   ) => ReturnType<typeof doc.getDocumentTree>;
@@ -147,6 +150,8 @@ export function createClient(config: BacklogConfig): BacklogClient {
     getDocument: (documentId: Parameters<typeof doc.getDocument>[1]) =>
       doc.getDocument(config, documentId),
     addDocument: (params: Parameters<typeof doc.addDocument>[1]) => doc.addDocument(config, params),
+    deleteDocument: (documentId: Parameters<typeof doc.deleteDocument>[1]) =>
+      doc.deleteDocument(config, documentId),
     getDocumentTree: (params: Parameters<typeof doc.getDocumentTree>[1]) =>
       doc.getDocumentTree(config, params),
     downloadDocumentAttachment: (
