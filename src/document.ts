@@ -1,10 +1,6 @@
 import type { BacklogConfig } from "./config.ts";
 import type { Document, DocumentTree } from "./entities.ts";
-import type {
-  AddDocumentParams,
-  GetDocumentsParams,
-  GetDocumentTreeParams,
-} from "./params.ts";
+import type { AddDocumentParams, GetDocumentsParams, GetDocumentTreeParams } from "./params.ts";
 import { download, request } from "./request.ts";
 
 /**
