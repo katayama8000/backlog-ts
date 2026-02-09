@@ -160,7 +160,7 @@ Following the project's coding standards defined in `.github/copilot-instruction
  * @see https://developer.nulab.com/docs/backlog/api/2/get-space/
  */
 export async function getSpace(config: BacklogConfig): Promise<Space> {
-  return await request<Space>(config, "space");
+  return await request<Space>(config, 'space');
 }
 ```
 
@@ -171,10 +171,11 @@ export async function getSpace(config: BacklogConfig): Promise<Space> {
 1. ✅ Implement Project APIs
 2. ✅ Implement Issue APIs
 3. Implement Wiki APIs
-4. ✅ Implement User APIs
-5. Implement Git/SVN repository APIs
-6. ✅ Set up GitHub Actions CI/CD
-7. ✅ Publish to JSR (JavaScript Registry)
+4. ✅ Implement Document APIs
+5. ✅ Implement User APIs
+6. Implement Git/SVN repository APIs
+7. ✅ Set up GitHub Actions CI/CD
+8. ✅ Publish to JSR (JavaScript Registry)
 
 ### Future Enhancements
 
