@@ -160,7 +160,7 @@ Following the project's coding standards defined in `.github/copilot-instruction
  * @see https://developer.nulab.com/docs/backlog/api/2/get-space/
  */
 export async function getSpace(config: BacklogConfig): Promise<Space> {
-  return await request<Space>(config, 'space');
+  return await request<Space>(config, "space");
 }
 ```
 
