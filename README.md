@@ -19,7 +19,7 @@ A Backlog API client for Deno. This library is unofficial but [the developer](ht
 ## Installation
 
 ```typescript
-import { createClient } from 'jsr:@katayama8000/backlog-ts';
+import { createClient } from "jsr:@katayama8000/backlog-ts";
 ```
 
 ### Tree-shakeable subpath imports
@@ -27,14 +27,11 @@ import { createClient } from 'jsr:@katayama8000/backlog-ts';
 Import only the domain you need to reduce bundle size:
 
 ```typescript
-import {
-  getSpace,
-  getSpaceActivities,
-} from 'jsr:@katayama8000/backlog-ts/space';
-import { getIssue, getIssues } from 'jsr:@katayama8000/backlog-ts/issue';
-import { getProjects } from 'jsr:@katayama8000/backlog-ts/project';
-import { getDocuments } from 'jsr:@katayama8000/backlog-ts/document';
-import { getUsers, getMyself } from 'jsr:@katayama8000/backlog-ts/user';
+import { getSpace, getSpaceActivities } from "jsr:@katayama8000/backlog-ts/space";
+import { getIssue, getIssues } from "jsr:@katayama8000/backlog-ts/issue";
+import { getProjects } from "jsr:@katayama8000/backlog-ts/project";
+import { getDocuments } from "jsr:@katayama8000/backlog-ts/document";
+import { getMyself, getUsers } from "jsr:@katayama8000/backlog-ts/user";
 ```
 
 Available subpaths:
@@ -55,11 +52,11 @@ Available subpaths:
 ### API Key Authentication
 
 ```typescript
-import { createClient } from 'jsr:@katayama8000/backlog-ts';
+import { createClient } from "jsr:@katayama8000/backlog-ts";
 
 const client = createClient({
-  host: 'your-space.backlog.com',
-  apiKey: 'your-api-key',
+  host: "your-space.backlog.com",
+  apiKey: "your-api-key",
 });
 
 // Get space information
@@ -69,7 +66,7 @@ console.log(space);
 // Get recent activities
 const activities = await client.getSpaceActivities({
   count: 20,
-  order: 'desc',
+  order: "desc",
 });
 console.log(activities);
 ```
@@ -77,11 +74,11 @@ console.log(activities);
 ### OAuth2 Authentication
 
 ```typescript
-import { createClient } from 'jsr:@katayama8000/backlog-ts';
+import { createClient } from "jsr:@katayama8000/backlog-ts";
 
 const client = createClient({
-  host: 'your-space.backlog.com',
-  accessToken: 'your-oauth2-access-token',
+  host: "your-space.backlog.com",
+  accessToken: "your-oauth2-access-token",
 });
 
 const space = await client.getSpace();
@@ -91,19 +88,19 @@ console.log(space);
 ### Request/Response Logging
 
 ```typescript
-import { consoleLogger, createClient } from 'jsr:@katayama8000/backlog-ts';
+import { consoleLogger, createClient } from "jsr:@katayama8000/backlog-ts";
 
 // Use built-in console logger
 const client = createClient({
-  host: 'your-space.backlog.com',
-  apiKey: 'your-api-key',
+  host: "your-space.backlog.com",
+  apiKey: "your-api-key",
   logger: consoleLogger,
 });
 
 // Or use a custom logger
 const clientWithCustomLogger = createClient({
-  host: 'your-space.backlog.com',
-  apiKey: 'your-api-key',
+  host: "your-space.backlog.com",
+  apiKey: "your-api-key",
   logger: {
     request(method, url, headers, body) {
       console.log(`[${method}] ${url}`);
@@ -126,11 +123,11 @@ const space = await client.getSpace();
 Configure automatic retry logic for failed requests:
 
 ```typescript
-import { createClient } from 'jsr:@katayama8000/backlog-ts';
+import { createClient } from "jsr:@katayama8000/backlog-ts";
 
 const client = createClient({
-  host: 'your-space.backlog.com',
-  apiKey: 'your-api-key',
+  host: "your-space.backlog.com",
+  apiKey: "your-api-key",
   retry: {
     maxAttempts: 3, // Maximum retry attempts (default: 3)
     baseDelay: 1000, // Base delay in milliseconds (default: 1000)
@@ -163,8 +160,8 @@ To disable retry completely:
 
 ```typescript
 const client = createClient({
-  host: 'your-space.backlog.com',
-  apiKey: 'your-api-key',
+  host: "your-space.backlog.com",
+  apiKey: "your-api-key",
   retry: {
     maxAttempts: 1, // Disable retry
   },

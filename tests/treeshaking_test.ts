@@ -8,24 +8,24 @@
  * This is verified by running `deno info --json <file>` and checking the
  * resolved module list.
  */
-import { assertEquals } from '@std/assert';
+import { assertEquals } from "@std/assert";
 
 /** Domain module basenames shared by all subpaths */
 const SHARED_MODULES = new Set([
-  'config.ts',
-  'entities.ts',
-  'params.ts',
-  'request.ts',
-  'types.ts',
+  "config.ts",
+  "entities.ts",
+  "params.ts",
+  "request.ts",
+  "types.ts",
 ]);
 
 /** All domain-specific files */
 const ALL_DOMAIN_MODULES = [
-  'space.ts',
-  'issue.ts',
-  'project.ts',
-  'document.ts',
-  'user.ts',
+  "space.ts",
+  "issue.ts",
+  "project.ts",
+  "document.ts",
+  "user.ts",
 ];
 
 /**
@@ -33,28 +33,28 @@ const ALL_DOMAIN_MODULES = [
  * the given source file, using `deno info --json`.
  */
 async function getModuleGraph(filePath: string): Promise<Set<string>> {
-  const cmd = new Deno.Command('deno', {
-    args: ['info', '--json', filePath],
-    stdout: 'piped',
-    stderr: 'piped',
+  const cmd = new Deno.Command("deno", {
+    args: ["info", "--json", filePath],
+    stdout: "piped",
+    stderr: "piped",
   });
   const { stdout } = await cmd.output();
   const json = JSON.parse(new TextDecoder().decode(stdout));
 
   return new Set<string>(
     // deno-lint-ignore no-explicit-any
-    json.modules.map((m: any) => m.specifier.split('/').at(-1) as string),
+    json.modules.map((m: any) => m.specifier.split("/").at(-1) as string),
   );
 }
 
-const ROOT = new URL('../src/', import.meta.url);
+const ROOT = new URL("../src/", import.meta.url);
 
 // ---------------------------------------------------------------------------
 // Each subpath should include only itself + shared modules
 // ---------------------------------------------------------------------------
 
 for (const domain of ALL_DOMAIN_MODULES) {
-  const domainName = domain.replace('.ts', '');
+  const domainName = domain.replace(".ts", "");
   const otherDomains = ALL_DOMAIN_MODULES.filter((d) => d !== domain);
 
   Deno.test(
@@ -91,8 +91,8 @@ for (const domain of ALL_DOMAIN_MODULES) {
 // mod.ts (full entry point) should include ALL domain modules
 // ---------------------------------------------------------------------------
 
-Deno.test('tree-shaking: mod.ts includes all domain modules', async () => {
-  const filePath = new URL('mod.ts', ROOT).pathname;
+Deno.test("tree-shaking: mod.ts includes all domain modules", async () => {
+  const filePath = new URL("mod.ts", ROOT).pathname;
   const graph = await getModuleGraph(filePath);
 
   for (const domain of ALL_DOMAIN_MODULES) {
