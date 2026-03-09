@@ -1,7 +1,16 @@
 {
   "name": "@katayama8000/backlog-ts",
   "version": "0.1.6",
-  "exports": "./src/mod.ts",
+  "exports": {
+    ".": "./src/mod.ts",
+    "./space": "./src/space.ts",
+    "./issue": "./src/issue.ts",
+    "./document": "./src/document.ts",
+    "./project": "./src/project.ts",
+    "./user": "./src/user.ts",
+    "./config": "./src/config.ts",
+    "./types": "./src/types.ts"
+  },
   "license": "MIT",
   "publish": {
     "include": [
@@ -19,9 +28,10 @@
     ]
   },
   "tasks": {
-    "test": "deno test --allow-net --allow-env tests/ --ignore=tests/integration_test.ts",
+    "test": "deno test --allow-net --allow-env tests/ --ignore=tests/integration_test.ts --ignore=tests/treeshaking_test.ts",
+    "test:treeshaking": "deno test --allow-net --allow-env --allow-run tests/treeshaking_test.ts",
     "test:coverage": "deno test --allow-net --allow-env --coverage=coverage tests/ --ignore=tests/integration_test.ts",
-    "test:all": "deno test --allow-net --allow-env --allow-read",
+    "test:all": "deno test --allow-net --allow-env --allow-read --allow-run",
     "test:integration": "deno test --allow-net --allow-env --allow-read tests/integration_test.ts",
     "test:watch": "deno test --allow-net --allow-env --allow-read --watch",
     "dev": "deno run --watch --allow-net src/mod.ts",

@@ -22,6 +22,31 @@ A Backlog API client for Deno. This library is unofficial but [the developer](ht
 import { createClient } from "jsr:@katayama8000/backlog-ts";
 ```
 
+### Tree-shakeable subpath imports
+
+Import only the domain you need to reduce bundle size:
+
+```typescript
+import { getSpace, getSpaceActivities } from "jsr:@katayama8000/backlog-ts/space";
+import { getIssue, getIssues } from "jsr:@katayama8000/backlog-ts/issue";
+import { getProjects } from "jsr:@katayama8000/backlog-ts/project";
+import { getDocuments } from "jsr:@katayama8000/backlog-ts/document";
+import { getMyself, getUsers } from "jsr:@katayama8000/backlog-ts/user";
+```
+
+Available subpaths:
+
+| Subpath                                 | File              | Description                     |
+| --------------------------------------- | ----------------- | ------------------------------- |
+| `jsr:@katayama8000/backlog-ts`          | `src/mod.ts`      | Full client with `createClient` |
+| `jsr:@katayama8000/backlog-ts/space`    | `src/space.ts`    | Space APIs                      |
+| `jsr:@katayama8000/backlog-ts/issue`    | `src/issue.ts`    | Issue APIs                      |
+| `jsr:@katayama8000/backlog-ts/project`  | `src/project.ts`  | Project APIs                    |
+| `jsr:@katayama8000/backlog-ts/document` | `src/document.ts` | Document APIs                   |
+| `jsr:@katayama8000/backlog-ts/user`     | `src/user.ts`     | User APIs                       |
+| `jsr:@katayama8000/backlog-ts/config`   | `src/config.ts`   | Config types & logger           |
+| `jsr:@katayama8000/backlog-ts/types`    | `src/types.ts`    | Shared type definitions         |
+
 ## Usage
 
 ### API Key Authentication
@@ -108,7 +133,8 @@ const client = createClient({
     baseDelay: 1000, // Base delay in milliseconds (default: 1000)
     maxDelay: 30000, // Maximum delay between retries (default: 30000)
     exponentialBackoff: true, // Use exponential backoff (default: true)
-    retryableStatusCodes: [ // HTTP status codes to retry (default: [429, 500, 502, 503, 504])
+    retryableStatusCodes: [
+      // HTTP status codes to retry (default: [429, 500, 502, 503, 504])
       429, // Too Many Requests (rate limiting)
       500, // Internal Server Error
       502, // Bad Gateway
