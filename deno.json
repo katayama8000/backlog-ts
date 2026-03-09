@@ -1,7 +1,16 @@
 {
   "name": "@katayama8000/backlog-ts",
   "version": "0.1.6",
-  "exports": "./src/mod.ts",
+  "exports": {
+    ".": "./src/mod.ts",
+    "./space": "./src/space.ts",
+    "./issue": "./src/issue.ts",
+    "./document": "./src/document.ts",
+    "./project": "./src/project.ts",
+    "./user": "./src/user.ts",
+    "./config": "./src/config.ts",
+    "./types": "./src/types.ts"
+  },
   "license": "MIT",
   "publish": {
     "include": [
