@@ -94,6 +94,8 @@ export interface BacklogConfig {
   apiKey?: string;
   /** OAuth2 access token for authentication */
   accessToken?: string;
+  /** Optional custom fetch implementation */
+  fetcher?: typeof fetch;
   /** Request timeout in milliseconds */
   timeout?: number;
   /** Logger for request/response logging */

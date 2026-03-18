@@ -118,6 +118,30 @@ const clientWithCustomLogger = createClient({
 const space = await client.getSpace();
 ```
 
+### Custom Fetcher Injection (Optional)
+
+You can optionally inject your own `fetch` implementation. If omitted, the global `fetch` is used.
+
+```typescript
+import { createClient } from "jsr:@katayama8000/backlog-ts";
+
+const customFetcher: typeof fetch = async (input, init) => {
+  // Example: add tracing headers or route through your own runtime transport
+  const request = new Request(input, init);
+  request.headers.set("X-Trace-Id", crypto.randomUUID());
+  return await fetch(request);
+};
+
+const client = createClient({
+  host: "your-space.backlog.com",
+  apiKey: "your-api-key",
+  fetcher: customFetcher, // Optional
+});
+
+const space = await client.getSpace();
+console.log(space);
+```
+
 ### Request Retry Configuration
 
 Configure automatic retry logic for failed requests:
