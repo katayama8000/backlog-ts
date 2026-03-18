@@ -1,5 +1,14 @@
 {
   "name": "@backlog/backlog-ts",
   "version": "0.1.5",
-  "exports": "./src/mod.ts"
+  "exports": {
+    ".": "./src/mod.ts",
+    "./space": "./src/space.ts",
+    "./issue": "./src/issue.ts",
+    "./document": "./src/document.ts",
+    "./project": "./src/project.ts",
+    "./user": "./src/user.ts",
+    "./config": "./src/config.ts",
+    "./types": "./src/types.ts"
+  }
 }
