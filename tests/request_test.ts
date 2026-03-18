@@ -435,3 +435,58 @@ Deno.test({
     }
   },
 });
+
+Deno.test("request - uses injected fetcher", async () => {
+  const calls: Array<{ input: RequestInfo | URL; init?: RequestInit }> = [];
+  const fetcher: typeof fetch = (input, init) => {
+    calls.push({ input, init });
+    return Promise.resolve(
+      new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+  };
+
+  const config: BacklogConfig = {
+    host: "example.backlog.com",
+    apiKey: "test-key",
+    fetcher,
+  };
+
+  const result = await request<{ success: boolean }>(config, "space");
+
+  assertEquals(result.success, true);
+  assertEquals(calls.length, 1);
+  assertEquals(String(calls[0].input).includes("example.backlog.com"), true);
+});
+
+Deno.test("download - uses injected fetcher", async () => {
+  const mockData = new Uint8Array([9, 8, 7]);
+  const calls: Array<{ input: RequestInfo | URL; init?: RequestInit }> = [];
+  const fetcher: typeof fetch = (input, init) => {
+    calls.push({ input, init });
+    return Promise.resolve(
+      new Response(mockData, {
+        status: 200,
+        headers: {
+          "Content-Type": "application/octet-stream",
+          "Content-Disposition": 'attachment; filename="custom.bin"',
+        },
+      }),
+    );
+  };
+
+  const config: BacklogConfig = {
+    host: "example.backlog.com",
+    apiKey: "test-key",
+    fetcher,
+  };
+
+  const result = await download(config, "files/1");
+
+  assertEquals(new Uint8Array(result.body), mockData);
+  assertEquals(result.fileName, "custom.bin");
+  assertEquals(calls.length, 1);
+  assertEquals(String(calls[0].input).includes("example.backlog.com"), true);
+});

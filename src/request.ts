@@ -123,13 +123,14 @@ function buildHeaders(config: BacklogConfig): Record<string, string> {
 async function executeRequest<T>(
   url: string,
   requestOptions: RequestInit,
+  fetcher: typeof fetch,
   logger?: BacklogConfig["logger"],
   method: string = "GET",
 ): Promise<{ response: Response; data: T; duration: number }> {
   const startTime = performance.now();
 
   try {
-    const response = await fetch(url, requestOptions);
+    const response = await fetcher(url, requestOptions);
     const duration = performance.now() - startTime;
 
     if (!response.ok) {
@@ -203,6 +204,7 @@ export async function request<T>(
   const method = options.method || "GET";
   const url = buildUrl(config, path, options.params);
   const headers = buildHeaders(config);
+  const fetcher = config.fetcher ?? fetch;
   const logger = config.logger;
 
   // Merge retry configuration with defaults
@@ -244,7 +246,7 @@ export async function request<T>(
         requestOptions.signal = controller.signal;
 
         try {
-          const result = await executeRequest<T>(url, requestOptions, logger, method);
+          const result = await executeRequest<T>(url, requestOptions, fetcher, logger, method);
           clearTimeout(timeoutId);
           return result.data;
         } catch (error) {
@@ -252,7 +254,7 @@ export async function request<T>(
           throw error;
         }
       } else {
-        const result = await executeRequest<T>(url, requestOptions, logger, method);
+        const result = await executeRequest<T>(url, requestOptions, fetcher, logger, method);
         return result.data;
       }
     } catch (error) {
@@ -310,6 +312,7 @@ export async function download(
   const method = "GET";
   const url = buildUrl(config, path);
   const headers = buildHeaders(config);
+  const fetcher = config.fetcher ?? fetch;
   const logger = config.logger;
 
   // Log request if logger is configured
@@ -321,7 +324,7 @@ export async function download(
   const startTime = performance.now();
 
   try {
-    const response = await fetch(url, {
+    const response = await fetcher(url, {
       method,
       headers,
     });
